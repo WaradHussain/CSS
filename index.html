@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS — Complete Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+--bg:#0f1117;--sidebar-bg:#0a0c10;--content-bg:#ffffff;--surface:#f8f9fc;--surface2:#f1f3f8;
+--border:#e4e7ef;--border-dark:#1e2230;--text:#1a1d2e;--text-muted:#6b7280;--text-light:#9ca3af;
+--sidebar-text:#8b95a8;--sidebar-active:#ffffff;--sidebar-hover:#1e2436;
+--blue:#3b82f6;--blue-light:#eff6ff;--blue-border:#bfdbfe;
+--purple:#8b5cf6;--purple-light:#f5f3ff;
+--green:#10b981;--green-light:#ecfdf5;
+--amber:#f59e0b;--amber-light:#fffbeb;
+--red:#ef4444;--red-light:#fef2f2;
+--teal:#14b8a6;--teal-light:#f0fdfa;
+--code-bg:#1e2230;--code-text:#e2e8f0;--code-comment:#6b7897;
+--code-keyword:#c792ea;--code-value:#f78c6c;--code-selector:#82aaff;
+--code-property:#b2ccd6;--code-string:#c3e88d;
+--sidebar-width:260px;
+--font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+--font-mono:'Fira Code','Cascadia Code','JetBrains Mono',Consolas,monospace;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);display:flex;min-height:100vh;line-height:1.6;}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar-width);background:var(--sidebar-bg);border-right:1px solid var(--border-dark);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;display:flex;flex-direction:column;}
+#sidebar::-webkit-scrollbar{width:4px;}
+#sidebar::-webkit-scrollbar-thumb{background:#2a3040;border-radius:2px;}
+.sidebar-header{padding:24px 20px 16px;border-bottom:1px solid var(--border-dark);flex-shrink:0;}
+.sidebar-logo{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.3px;display:flex;align-items:center;gap:8px;}
+.sidebar-logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:white;}
+.sidebar-subtitle{font-size:11px;color:var(--sidebar-text);margin-top:4px;}
+.sidebar-search{padding:12px 16px;border-bottom:1px solid var(--border-dark);}
+.sidebar-search input{width:100%;background:#1a1f2e;border:1px solid #2a3040;border-radius:7px;padding:7px 12px;font-size:12px;color:var(--sidebar-text);outline:none;font-family:var(--font-sans);}
+.sidebar-search input::placeholder{color:#4b5568;}
+.sidebar-search input:focus{border-color:#3b4a6b;}
+.sidebar-nav{padding:8px 0;flex:1;}
+.nav-section-title{font-size:10px;font-weight:700;color:#4b5568;text-transform:uppercase;letter-spacing:0.8px;padding:12px 20px 4px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 20px;font-size:13px;color:var(--sidebar-text);text-decoration:none;transition:all 0.15s;cursor:pointer;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--sidebar-hover);color:#c8d0e0;}
+.nav-item.active{color:var(--sidebar-active);background:#1a2033;border-left-color:var(--blue);font-weight:500;}
+.nav-item-num{font-size:10px;color:#4b5568;font-weight:600;min-width:18px;}
+.nav-item.active .nav-item-num{color:var(--blue);}
+.nav-item.hidden{display:none;}
+
+/* MAIN */
+#content{margin-left:var(--sidebar-width);flex:1;background:var(--content-bg);min-height:100vh;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f1117 0%,#1a1f2e 50%,#0d1526 100%);padding:80px 60px 72px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(59,130,246,0.12) 0%,transparent 70%);pointer-events:none;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#93c5fd;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;margin-bottom:20px;}
+.hero h1{font-size:44px;font-weight:800;color:#fff;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px;}
+.hero h1 span{color:#60a5fa;}
+.hero-desc{font-size:17px;color:#8b95a8;max-width:600px;line-height:1.7;margin-bottom:32px;}
+.hero-stats{display:flex;gap:32px;flex-wrap:wrap;}
+.hero-stat-num{font-size:22px;font-weight:800;color:#fff;}
+.hero-stat-label{font-size:12px;color:#6b7280;margin-top:2px;}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;}
+
+/* CHAPTER */
+.chapter{padding:48px 56px 64px;max-width:860px;}
+.chapter-header{margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.chapter-num{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.chapter h2{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-0.8px;line-height:1.2;margin-bottom:10px;}
+.chapter-intro{font-size:16px;color:var(--text-muted);line-height:1.7;max-width:680px;}
+h3{font-size:19px;font-weight:700;color:var(--text);letter-spacing:-0.3px;margin:32px 0 12px;}
+h4{font-size:15px;font-weight:700;color:var(--text);margin:24px 0 8px;text-transform:uppercase;letter-spacing:0.5px;}
+p{font-size:15px;color:var(--text-muted);line-height:1.75;margin-bottom:14px;}
+p strong{color:var(--text);font-weight:600;}
+
+/* CODE */
+.code-block{background:var(--code-bg);border-radius:10px;margin:16px 0 24px;overflow:hidden;border:1px solid #2a3040;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #2a3040;background:#161927;}
+.code-lang{font-size:11px;font-weight:700;color:#4b5568;text-transform:uppercase;letter-spacing:0.8px;}
+.code-dots{display:flex;gap:6px;}
+.code-dot{width:10px;height:10px;border-radius:50%;}
+.code-dot:nth-child(1){background:#ff5f57;}
+.code-dot:nth-child(2){background:#febc2e;}
+.code-dot:nth-child(3){background:#28c840;}
+pre{padding:18px 20px;overflow-x:auto;font-size:13.5px;line-height:1.65;font-family:var(--font-mono);color:var(--code-text);}
+.kw{color:var(--code-keyword);}
+.sel{color:var(--code-selector);}
+.prop{color:var(--code-property);}
+.val{color:var(--code-value);}
+.str{color:var(--code-string);}
+.cmt{color:var(--code-comment);font-style:italic;}
+.at-rule{color:#c792ea;}
+
+/* CALLOUTS */
+.callout{border-radius:10px;padding:16px 18px;margin:20px 0;display:flex;gap:12px;font-size:14px;line-height:1.65;}
+.callout-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.callout-body{flex:1;}
+.callout-body strong{display:block;font-size:13px;font-weight:700;margin-bottom:4px;}
+.callout-body p{font-size:14px;margin:0;color:inherit;}
+.callout.info{background:var(--blue-light);border:1px solid var(--blue-border);color:#1e40af;}
+.callout.tip{background:var(--green-light);border:1px solid #a7f3d0;color:#065f46;}
+.callout.warning{background:var(--amber-light);border:1px solid #fde68a;color:#92400e;}
+.callout.gotcha{background:var(--red-light);border:1px solid #fecaca;color:#991b1b;}
+.callout.purple{background:var(--purple-light);border:1px solid #ddd6fe;color:#4c1d95;}
+
+/* TABLES */
+.compare-table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:14px;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.compare-table th{background:var(--surface2);padding:11px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+.compare-table td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:hover td{background:var(--surface);}
+.compare-table td:first-child{font-weight:600;color:var(--text);}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.3px;}
+.tag.green{background:var(--green-light);color:#065f46;}
+.tag.red{background:var(--red-light);color:#991b1b;}
+.tag.blue{background:var(--blue-light);color:#1e40af;}
+.tag.purple{background:var(--purple-light);color:#4c1d95;}
+.tag.amber{background:var(--amber-light);color:#92400e;}
+
+/* DIAGRAMS */
+.diagram-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0 28px;overflow-x:auto;}
+.diagram-title{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:20px;}
+
+/* INLINE CODE */
+code{font-family:var(--font-mono);font-size:13px;background:#f0f4ff;color:#4338ca;padding:1px 6px;border-radius:4px;border:1px solid #e0e7ff;}
+
+/* LISTS */
+ul,ol{padding-left:20px;margin-bottom:14px;}
+li{font-size:15px;color:var(--text-muted);line-height:1.7;margin-bottom:4px;}
+li strong{color:var(--text);font-weight:600;}
+
+/* RULE */
+.rule{height:1px;background:var(--border);margin:32px 0;}
+
+/* SPEC TABLE */
+.spec-table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:14px;}
+.spec-table tr{border-bottom:1px solid var(--border);}
+.spec-table tr:last-child{border-bottom:none;}
+.spec-table td{padding:10px 12px;color:var(--text-muted);}
+.spec-table td:first-child{font-family:var(--font-mono);font-size:13px;color:#7c3aed;font-weight:600;width:200px;}
+
+/* HIGHLIGHT ROW */
+.highlight-row{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;}
+.highlight-card{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.highlight-card-icon{font-size:20px;margin-bottom:8px;}
+.highlight-card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.highlight-card-text{font-size:13px;color:var(--text-muted);line-height:1.5;}
+
+/* SPECIFICITY */
+.specificity-bar{display:flex;align-items:center;gap:12px;margin:8px 0;font-size:13px;}
+.spec-selector{font-family:var(--font-mono);color:var(--blue);min-width:180px;font-size:13px;}
+.spec-score{font-family:var(--font-mono);font-size:12px;color:var(--text-muted);min-width:60px;background:var(--surface2);padding:2px 8px;border-radius:4px;text-align:center;}
+.spec-fill-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.spec-fill{height:100%;border-radius:4px;}
+
+/* NAV BUTTONS */
+.chapter-nav{display:flex;justify-content:space-between;padding:32px 56px 48px;border-top:1px solid var(--border);gap:16px;}
+.chapter-nav-btn{display:flex;flex-direction:column;padding:14px 18px;border:1px solid var(--border);border-radius:10px;cursor:pointer;text-decoration:none;background:var(--surface);transition:all 0.15s;max-width:260px;}
+.chapter-nav-btn:hover{border-color:var(--blue);background:var(--blue-light);}
+.chapter-nav-dir{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
+.chapter-nav-title{font-size:14px;font-weight:600;color:var(--text);}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">CSS</div>
+      Complete Guide
+    </div>
+    <div class="sidebar-subtitle">From zero to production-ready</div>
+  </div>
+  <div class="sidebar-search">
+    <input type="text" id="nav-search" placeholder="Search chapters..." oninput="filterNav(this.value)">
+  </div>
+  <div class="sidebar-nav" id="sidebar-nav">
+    <div class="nav-section-title">Getting Started</div>
+    <a class="nav-item active" data-page="home" onclick="showPage('home',this)"><span class="nav-item-num">00</span> Overview</a>
+    <a class="nav-item" data-page="ch1" onclick="showPage('ch1',this)"><span class="nav-item-num">01</span> What is CSS?</a>
+    <a class="nav-item" data-page="ch2" onclick="showPage('ch2',this)"><span class="nav-item-num">02</span> Adding CSS</a>
+    <div class="nav-section-title">Core Concepts</div>
+    <a class="nav-item" data-page="ch3" onclick="showPage('ch3',this)"><span class="nav-item-num">03</span> Selectors</a>
+    <a class="nav-item" data-page="ch4" onclick="showPage('ch4',this)"><span class="nav-item-num">04</span> The Box Model</a>
+    <a class="nav-item" data-page="ch5" onclick="showPage('ch5',this)"><span class="nav-item-num">05</span> Colors &amp; Units</a>
+    <a class="nav-item" data-page="ch6" onclick="showPage('ch6',this)"><span class="nav-item-num">06</span> Typography</a>
+    <a class="nav-item" data-page="ch7" onclick="showPage('ch7',this)"><span class="nav-item-num">07</span> Backgrounds</a>
+    <a class="nav-item" data-page="ch8" onclick="showPage('ch8',this)"><span class="nav-item-num">08</span> Borders &amp; Shadows</a>
+    <div class="nav-section-title">Layout</div>
+    <a class="nav-item" data-page="ch9" onclick="showPage('ch9',this)"><span class="nav-item-num">09</span> Display &amp; Visibility</a>
+    <a class="nav-item" data-page="ch10" onclick="showPage('ch10',this)"><span class="nav-item-num">10</span> Positioning</a>
+    <a class="nav-item" data-page="ch11" onclick="showPage('ch11',this)"><span class="nav-item-num">11</span> Flexbox</a>
+    <a class="nav-item" data-page="ch12" onclick="showPage('ch12',this)"><span class="nav-item-num">12</span> CSS Grid</a>
+    <div class="nav-section-title">Advanced</div>
+    <a class="nav-item" data-page="ch13" onclick="showPage('ch13',this)"><span class="nav-item-num">13</span> Responsive Design</a>
+    <a class="nav-item" data-page="ch14" onclick="showPage('ch14',this)"><span class="nav-item-num">14</span> Transitions &amp; Animations</a>
+    <a class="nav-item" data-page="ch15" onclick="showPage('ch15',this)"><span class="nav-item-num">15</span> CSS Variables</a>
+    <a class="nav-item" data-page="ch16" onclick="showPage('ch16',this)"><span class="nav-item-num">16</span> Pseudo-classes &amp; Elements</a>
+    <a class="nav-item" data-page="ch17" onclick="showPage('ch17',this)"><span class="nav-item-num">17</span> Z-index &amp; Stacking</a>
+    <a class="nav-item" data-page="ch18" onclick="showPage('ch18',this)"><span class="nav-item-num">18</span> Practical Guide</a>
+  </div>
+</nav>
+
+<main id="content">
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-tag">📖 Complete Reference Guide</div>
+    <h1>CSS — The Complete<br><span>Visual Guide</span></h1>
+    <p class="hero-desc">Everything you need to understand CSS, from the very basics to advanced layout systems. Written clearly, with diagrams and real code. No fluff.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">18</div><div class="hero-stat-label">Chapters</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">150+</div><div class="hero-stat-label">Properties covered</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">30+</div><div class="hero-stat-label">Code examples</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">10+</div><div class="hero-stat-label">Visual diagrams</div></div>
+    </div>
+  </div>
+  <div class="chapter">
+    <h3 style="margin-top:0">How to use this guide</h3>
+    <p>Use the sidebar to jump to any chapter. Each chapter explains the <strong>why</strong> before the how — because understanding why something exists makes it much easier to remember and use correctly.</p>
+    <div class="highlight-row">
+      <div class="highlight-card"><div class="highlight-card-icon">🧱</div><div class="highlight-card-title">Chapters 1–8: Foundations</div><div class="highlight-card-text">How CSS works, selectors, the box model, colors, typography, and backgrounds.</div></div>
+      <div class="highlight-card"><div class="highlight-card-icon">📐</div><div class="highlight-card-title">Chapters 9–12: Layout</div><div class="highlight-card-text">Display, positioning, Flexbox, and CSS Grid — the tools that arrange everything on screen.</div></div>
+      <div class="highlight-card"><div class="highlight-card-icon">⚡</div><div class="highlight-card-title">Chapters 13–18: Advanced</div><div class="highlight-card-text">Responsive design, animations, variables, pseudo-elements, stacking, and practical usage.</div></div>
+    </div>
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>Understanding &gt; Memorizing</strong><p>You don't need to memorize CSS. You need to understand what each property does and why it exists. AI tools can write the code — your job is to know what to ask for and why.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CH1: WHAT IS CSS -->
+<div class="page" id="page-ch1">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 01</div>
+      <h2>What is CSS?</h2>
+      <p class="chapter-intro">CSS (Cascading Style Sheets) is the language that controls how HTML looks. HTML gives structure — CSS gives style. Understanding <em>why</em> CSS was invented makes the whole system click.</p>
+    </div>
+    <h3>The problem CSS solves</h3>
+    <p>Before CSS (early 1990s), web pages were plain text. Styling was done with HTML attributes like <code>&lt;font color="red"&gt;</code> written on every single element — mixed right into the content. This caused three big problems:</p>
+    <ul>
+      <li><strong>Ugly pages.</strong> No real design was possible — just black text on white.</li>
+      <li><strong>Repetition nightmare.</strong> Change one color = edit 100 pages manually.</li>
+      <li><strong>Mixed concerns.</strong> Design and content were tangled together, making code unreadable and hard to maintain.</li>
+    </ul>
+    <p>CSS was introduced in 1994 to fix all three. The idea: separate <em>what the content is</em> (HTML) from <em>how it looks</em> (CSS).</p>
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><strong>The Golden Rule</strong><p>HTML = content structure. CSS = visual presentation. Never mix them. This is why you should avoid <code>style=""</code> attributes in production code.</p></div>
+    </div>
+
+    <h3>What "Cascading" actually means</h3>
+    <p>The word "cascading" is the most misunderstood part. It means: when multiple CSS rules apply to the same element, there's a <strong>priority order</strong> to decide which rule wins.</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">How the Cascade works — priority order (highest wins)</div>
+      <svg width="100%" viewBox="0 0 660 290" role="img">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5"/></marker></defs>
+        <rect x="30" y="10" width="600" height="54" rx="8" fill="#fef2f2" stroke="#fecaca"/>
+        <text x="50" y="33" font-family="sans-serif" font-size="13" font-weight="700" fill="#dc2626">1. !important</text>
+        <text x="50" y="52" font-family="sans-serif" font-size="12" fill="#ef4444">Overrides everything. Avoid using it — it breaks maintainability.</text>
+        <text x="620" y="42" font-family="sans-serif" font-size="10" fill="#ef4444" text-anchor="end">Highest</text>
+        <line x1="330" y1="64" x2="330" y2="76" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <rect x="30" y="78" width="600" height="52" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+        <text x="50" y="101" font-family="sans-serif" font-size="13" font-weight="700" fill="#c2410c">2. Inline styles</text>
+        <text x="50" y="119" font-family="sans-serif" font-size="12" fill="#ea580c">style="" attribute directly on the element</text>
+        <line x1="330" y1="130" x2="330" y2="142" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <rect x="30" y="144" width="600" height="52" rx="8" fill="#fefce8" stroke="#fde68a"/>
+        <text x="50" y="167" font-family="sans-serif" font-size="13" font-weight="700" fill="#854d0e">3. Specificity</text>
+        <text x="50" y="185" font-family="sans-serif" font-size="12" fill="#a16207">ID &gt; Class &gt; Element selector — more specific selector wins</text>
+        <line x1="330" y1="196" x2="330" y2="208" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <rect x="30" y="210" width="600" height="52" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+        <text x="50" y="233" font-family="sans-serif" font-size="13" font-weight="700" fill="#166534">4. Source order</text>
+        <text x="50" y="251" font-family="sans-serif" font-size="12" fill="#16a34a">If specificity is equal, the rule written LAST wins</text>
+        <text x="620" y="241" font-family="sans-serif" font-size="10" fill="#16a34a" text-anchor="end">Lowest</text>
+      </svg>
+    </div>
+
+    <h3>Specificity — the most important cascade rule</h3>
+    <p>Every CSS selector has a <strong>specificity score</strong>. Think of it as three digits: <code>ID — CLASS — ELEMENT</code>. When two rules conflict, the higher score wins.</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Specificity scores — which selector wins?</div>
+      <div style="margin-top:8px;">
+        <div class="specificity-bar"><span class="spec-selector">p</span><span class="spec-score">0,0,1</span><div class="spec-fill-wrap"><div class="spec-fill" style="width:5%;background:#10b981;"></div></div></div>
+        <div class="specificity-bar"><span class="spec-selector">p.intro</span><span class="spec-score">0,1,1</span><div class="spec-fill-wrap"><div class="spec-fill" style="width:20%;background:#3b82f6;"></div></div></div>
+        <div class="specificity-bar"><span class="spec-selector">.nav a.active</span><span class="spec-score">0,2,1</span><div class="spec-fill-wrap"><div class="spec-fill" style="width:35%;background:#8b5cf6;"></div></div></div>
+        <div class="specificity-bar"><span class="spec-selector">#header</span><span class="spec-score">1,0,0</span><div class="spec-fill-wrap"><div class="spec-fill" style="width:70%;background:#f59e0b;"></div></div></div>
+        <div class="specificity-bar"><span class="spec-selector">#header .nav a</span><span class="spec-score">1,1,1</span><div class="spec-fill-wrap"><div class="spec-fill" style="width:90%;background:#ef4444;"></div></div></div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Specificity</span></div>
+<pre><span class="cmt">/* Score: 0,0,1 — element */</span>
+<span class="sel">p</span> { <span class="prop">color</span>: <span class="val">gray</span>; }
+
+<span class="cmt">/* Score: 0,1,0 — class — beats element */</span>
+<span class="sel">.intro</span> { <span class="prop">color</span>: <span class="val">blue</span>; }
+
+<span class="cmt">/* Score: 1,0,0 — ID — beats everything above */</span>
+<span class="sel">#hero</span> { <span class="prop">color</span>: <span class="val">red</span>; }
+
+<span class="cmt">/* Nuclear option — avoid */</span>
+<span class="sel">p</span> { <span class="prop">color</span>: <span class="val">green</span> <span class="kw">!important</span>; }</pre>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>Avoid !important and ID selectors in CSS</strong><p>They're impossible to override without even more specificity hacks. Stick to classes — flexible, reusable, easy to override.</p></div>
+    </div>
+
+    <h3>Inheritance</h3>
+    <p>Some CSS properties automatically pass down from parent to child elements. Others don't.</p>
+    <table class="compare-table">
+      <thead><tr><th>Inherits automatically</th><th>Does NOT inherit</th></tr></thead>
+      <tbody>
+        <tr><td><code>color</code></td><td><code>margin</code>, <code>padding</code></td></tr>
+        <tr><td><code>font-family</code>, <code>font-size</code></td><td><code>border</code></td></tr>
+        <tr><td><code>line-height</code></td><td><code>background</code></td></tr>
+        <tr><td><code>text-align</code></td><td><code>width</code>, <code>height</code></td></tr>
+        <tr><td><code>letter-spacing</code></td><td><code>display</code>, <code>position</code></td></tr>
+      </tbody>
+    </table>
+    <p>That's why setting <code>font-family</code> on <code>body</code> applies to all text on the page — inheritance does the work.</p>
+  </div>
+  <div class="chapter-nav">
+    <span></span>
+    <a class="chapter-nav-btn" onclick="showPage('ch2',document.querySelector('[data-page=ch2]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Adding CSS</span></a>
+  </div>
+</div>
+
+<!-- CH2: ADDING CSS -->
+<div class="page" id="page-ch2">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 02</div>
+      <h2>Adding CSS to HTML</h2>
+      <p class="chapter-intro">Three ways to add CSS. Each has its place. In real projects, you almost always use external stylesheets.</p>
+    </div>
+    <h3>Method 1: Inline styles</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">HTML</span></div>
+<pre>&lt;<span class="sel">p</span> <span class="prop">style</span>="<span class="val">color: red; font-size: 20px;</span>"&gt;Hello&lt;/<span class="sel">p</span>&gt;</pre>
+    </div>
+    <table class="compare-table">
+      <thead><tr><th>Pros</th><th>Cons</th></tr></thead>
+      <tbody>
+        <tr><td>Quick for testing</td><td>Mixes content and style</td></tr>
+        <tr><td>Overrides all other styles</td><td>Can't reuse — repeat on every element</td></tr>
+        <tr><td>Good for JS-driven dynamic values</td><td>Hard to maintain at scale</td></tr>
+      </tbody>
+    </table>
+    <div class="callout gotcha">
+      <div class="callout-icon">🚫</div>
+      <div class="callout-body"><strong>Don't use in production</strong><p>Inline styles have the highest specificity (short of <code>!important</code>), making them very hard to override later.</p></div>
+    </div>
+
+    <h3>Method 2: Internal stylesheet</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">HTML</span></div>
+<pre>&lt;<span class="sel">head</span>&gt;
+  &lt;<span class="sel">style</span>&gt;
+    <span class="sel">p</span> { <span class="prop">color</span>: <span class="val">blue</span>; }
+    <span class="sel">.title</span> { <span class="prop">font-size</span>: <span class="val">24px</span>; }
+  &lt;/<span class="sel">style</span>&gt;
+&lt;/<span class="sel">head</span>&gt;</pre>
+    </div>
+    <p><strong>Good for:</strong> small single-page demos, email templates. <strong>Bad for:</strong> multi-page sites — you'd copy the same CSS into every file.</p>
+
+    <h3>Method 3: External stylesheet ✅ Recommended</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">HTML — index.html</span></div>
+<pre>&lt;<span class="sel">head</span>&gt;
+  &lt;<span class="sel">link</span> <span class="prop">rel</span>="<span class="str">stylesheet</span>" <span class="prop">href</span>="<span class="str">styles.css</span>"&gt;
+&lt;/<span class="sel">head</span>&gt;</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — styles.css</span></div>
+<pre><span class="sel">p</span> { <span class="prop">color</span>: <span class="val">blue</span>; }
+<span class="sel">.title</span> { <span class="prop">font-size</span>: <span class="val">24px</span>; }
+<span class="sel">#hero</span> { <span class="prop">background</span>: <span class="val">#f0f4ff</span>; }</pre>
+    </div>
+    <div class="callout tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><strong>Why external is best</strong><p>One CSS file controls all your pages. Change one rule, it updates everywhere. The browser caches the file so repeat page loads are faster.</p></div>
+    </div>
+
+    <h3>CSS Syntax — the exact format</h3>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Anatomy of a CSS rule</div>
+      <svg width="100%" viewBox="0 0 660 190" role="img">
+        <rect x="30" y="30" width="600" height="120" rx="10" fill="#f8f9fc" stroke="#e4e7ef"/>
+        <text x="60" y="74" font-family="'Fira Code',monospace" font-size="18" fill="#82aaff">.card</text>
+        <text x="140" y="74" font-family="'Fira Code',monospace" font-size="18" fill="#c8d0e0"> {</text>
+        <text x="60" y="106" font-family="'Fira Code',monospace" font-size="18" fill="#b2ccd6">  color</text>
+        <text x="162" y="106" font-family="'Fira Code',monospace" font-size="18" fill="#c8d0e0">:</text>
+        <text x="180" y="106" font-family="'Fira Code',monospace" font-size="18" fill="#f78c6c"> blue</text>
+        <text x="240" y="106" font-family="'Fira Code',monospace" font-size="18" fill="#ef4444">;</text>
+        <text x="60" y="136" font-family="'Fira Code',monospace" font-size="18" fill="#c8d0e0">}</text>
+        <!-- Labels -->
+        <line x1="90" y1="79" x2="90" y2="162" stroke="#82aaff" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="94" y="172" font-family="sans-serif" font-size="11" fill="#82aaff">Selector</text>
+        <line x1="185" y1="112" x2="300" y2="162" stroke="#b2ccd6" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="264" y="172" font-family="sans-serif" font-size="11" fill="#b2ccd6">Property</text>
+        <line x1="212" y1="112" x2="400" y2="162" stroke="#f78c6c" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="380" y="172" font-family="sans-serif" font-size="11" fill="#f78c6c">Value</text>
+        <line x1="240" y1="112" x2="500" y2="162" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="460" y="172" font-family="sans-serif" font-size="11" fill="#ef4444">Semicolon ;</text>
+      </svg>
+    </div>
+    <ul>
+      <li>Every declaration ends with <code>;</code> — forgetting it breaks the rule silently</li>
+      <li>Property and value are separated by <code>:</code></li>
+      <li>Declarations live inside <code>{ }</code> curly braces</li>
+      <li>One property per line — much easier to read</li>
+    </ul>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch1',document.querySelector('[data-page=ch1]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">What is CSS?</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch3',document.querySelector('[data-page=ch3]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Selectors</span></a>
+  </div>
+</div>
+
+<!-- CH3: SELECTORS -->
+<div class="page" id="page-ch3">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 03</div>
+      <h2>Selectors</h2>
+      <p class="chapter-intro">Selectors are how CSS targets HTML elements. They answer: "Which element am I styling?" Master selectors and you can precisely target anything on a page without touching the HTML structure.</p>
+    </div>
+    <h3>Basic selectors</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* Element — targets ALL &lt;p&gt; tags */</span>
+<span class="sel">p</span> { <span class="prop">color</span>: <span class="val">gray</span>; }
+
+<span class="cmt">/* Class — targets elements with class="card" */</span>
+<span class="sel">.card</span> { <span class="prop">background</span>: <span class="val">white</span>; }
+
+<span class="cmt">/* ID — targets the single element with id="hero" */</span>
+<span class="sel">#hero</span> { <span class="prop">height</span>: <span class="val">100vh</span>; }
+
+<span class="cmt">/* Universal — targets EVERYTHING (use only for resets) */</span>
+<span class="sel">*</span> { <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+
+<span class="cmt">/* Attribute — targets input[type="email"] */</span>
+<span class="sel">input[type="email"]</span> { <span class="prop">border</span>: <span class="val">2px solid blue</span>; }
+
+<span class="cmt">/* Grouping — same styles for multiple selectors */</span>
+<span class="sel">h1, h2, h3</span> { <span class="prop">font-family</span>: <span class="val">sans-serif</span>; }</pre>
+    </div>
+
+    <h3>Combinator selectors</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* Descendant — any &lt;p&gt; anywhere inside .container */</span>
+<span class="sel">.container p</span> { <span class="prop">color</span>: <span class="val">blue</span>; }
+
+<span class="cmt">/* Child (>) — only DIRECT children, not nested */</span>
+<span class="sel">.nav > li</span> { <span class="prop">display</span>: <span class="val">inline-block</span>; }
+
+<span class="cmt">/* Adjacent sibling (+) — &lt;p&gt; immediately after &lt;h2&gt; */</span>
+<span class="sel">h2 + p</span> { <span class="prop">font-size</span>: <span class="val">18px</span>; }
+
+<span class="cmt">/* General sibling (~) — ALL &lt;p&gt; siblings after &lt;h2&gt; */</span>
+<span class="sel">h2 ~ p</span> { <span class="prop">color</span>: <span class="val">gray</span>; }</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Descendant vs Child combinator</div>
+      <svg width="100%" viewBox="0 0 660 220" role="img">
+        <!-- Container box -->
+        <rect x="30" y="20" width="180" height="180" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+        <text x="120" y="44" font-family="sans-serif" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">.container</text>
+        <!-- Direct child div -->
+        <rect x="50" y="54" width="140" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="120" y="79" font-family="sans-serif" font-size="12" fill="#1e40af" text-anchor="middle">div (direct child)</text>
+        <!-- Nested p -->
+        <rect x="62" y="104" width="116" height="32" rx="5" fill="#bfdbfe" stroke="#60a5fa"/>
+        <text x="120" y="125" font-family="sans-serif" font-size="11" fill="#1e3a8a" text-anchor="middle">p (descendant)</text>
+        <!-- Direct child p -->
+        <rect x="50" y="146" width="140" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="120" y="171" font-family="sans-serif" font-size="12" fill="#1e40af" text-anchor="middle">p (direct child)</text>
+        <!-- Labels right side -->
+        <rect x="260" y="56" width="180" height="36" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+        <text x="350" y="70" font-family="sans-serif" font-size="12" fill="#166534" text-anchor="middle" font-weight="600">.container p</text>
+        <text x="350" y="84" font-family="sans-serif" font-size="11" fill="#166534" text-anchor="middle">targets both p elements</text>
+        <rect x="260" y="106" width="180" height="36" rx="6" fill="#fef9c3" stroke="#fde047"/>
+        <text x="350" y="120" font-family="sans-serif" font-size="12" fill="#854d0e" text-anchor="middle" font-weight="600">.container > p</text>
+        <text x="350" y="134" font-family="sans-serif" font-size="11" fill="#854d0e" text-anchor="middle">only the direct child p</text>
+        <line x1="212" y1="80" x2="258" y2="74" stroke="#94a3b8" stroke-width="1"/>
+        <line x1="212" y1="162" x2="258" y2="124" stroke="#94a3b8" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <h3>Best practices</h3>
+    <ul>
+      <li><strong>Use classes most of the time.</strong> Reusable, specific enough, easy to override.</li>
+      <li><strong>Avoid ID selectors in CSS.</strong> Too specific and impossible to override cleanly.</li>
+      <li><strong>Keep selectors short.</strong> <code>.card-title</code> beats <code>.wrapper .card .header h2 span</code>.</li>
+      <li><strong>Never use <code>*</code> except for resets.</strong> Applying styles to everything is a performance hit.</li>
+    </ul>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch2',document.querySelector('[data-page=ch2]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Adding CSS</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch4',document.querySelector('[data-page=ch4]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">The Box Model</span></a>
+  </div>
+</div>
+
+<!-- CH4: BOX MODEL -->
+<div class="page" id="page-ch4">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 04</div>
+      <h2>The Box Model</h2>
+      <p class="chapter-intro">Every element on a web page is a rectangular box. The box model describes exactly how that box is sized — four layers from inside out: content, padding, border, margin. Understanding this one concept fixes 80% of layout confusion.</p>
+    </div>
+
+    <h3>The four layers</h3>
+    <div class="diagram-wrap">
+      <div class="diagram-title">The CSS Box Model</div>
+      <svg width="100%" viewBox="0 0 660 360" role="img">
+        <!-- Margin -->
+        <rect x="30" y="16" width="600" height="328" rx="12" fill="#fef9c3" stroke="#fde047" stroke-width="2"/>
+        <text x="52" y="40" font-family="sans-serif" font-size="13" font-weight="700" fill="#854d0e">MARGIN</text>
+        <text x="52" y="57" font-family="sans-serif" font-size="11" fill="#a16207">Space outside the border. Pushes other elements away. Transparent — never has a background color.</text>
+        <!-- Border -->
+        <rect x="88" y="70" width="484" height="238" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="3"/>
+        <text x="108" y="92" font-family="sans-serif" font-size="13" font-weight="700" fill="#1e40af">BORDER</text>
+        <text x="108" y="109" font-family="sans-serif" font-size="11" fill="#2563eb">The visible frame around the element. Has width, style (solid/dashed), and color.</text>
+        <!-- Padding -->
+        <rect x="128" y="120" width="404" height="158" rx="8" fill="#dcfce7" stroke="#4ade80" stroke-width="2"/>
+        <text x="146" y="142" font-family="sans-serif" font-size="13" font-weight="700" fill="#166534">PADDING</text>
+        <text x="146" y="159" font-family="sans-serif" font-size="11" fill="#16a34a">Space inside the border. Pushes content away from the edges. Takes the element's background color.</text>
+        <!-- Content -->
+        <rect x="188" y="176" width="284" height="76" rx="6" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="330" y="210" font-family="sans-serif" font-size="13" font-weight="700" fill="#374151" text-anchor="middle">CONTENT</text>
+        <text x="330" y="228" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Your text, images, child elements live here. width/height sets this area.</text>
+      </svg>
+    </div>
+
+    <h3>Setting box model values</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">.box</span> {
+  <span class="prop">width</span>: <span class="val">300px</span>;
+  <span class="prop">height</span>: <span class="val">200px</span>;
+
+  <span class="cmt">/* Padding shorthand: all / top-bottom left-right / top right bottom left */</span>
+  <span class="prop">padding</span>: <span class="val">20px</span>;                <span class="cmt">/* all sides */</span>
+  <span class="prop">padding</span>: <span class="val">10px 20px</span>;           <span class="cmt">/* vertical | horizontal */</span>
+  <span class="prop">padding</span>: <span class="val">10px 20px 15px 25px</span>; <span class="cmt">/* top right bottom left (clockwise) */</span>
+  <span class="prop">padding-top</span>: <span class="val">10px</span>;            <span class="cmt">/* individual side */</span>
+
+  <span class="cmt">/* Border: width style color */</span>
+  <span class="prop">border</span>: <span class="val">2px solid #3b82f6</span>;
+  <span class="prop">border-radius</span>: <span class="val">8px</span>;            <span class="cmt">/* rounded corners */</span>
+
+  <span class="cmt">/* Margin — same shorthand as padding */</span>
+  <span class="prop">margin</span>: <span class="val">20px</span>;
+  <span class="prop">margin</span>: <span class="val">0 auto</span>;               <span class="cmt">/* centers the element horizontally */</span>
+}</pre>
+    </div>
+
+    <h3>⚠️ The most important rule: box-sizing</h3>
+    <p>By default (<code>content-box</code>), <code>width</code> only sets the content area. Adding padding or border makes the total element <em>larger than what you set</em> — which breaks layout math. Fix this globally:</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">content-box vs border-box</div>
+      <svg width="100%" viewBox="0 0 660 220" role="img">
+        <!-- content-box (bad) -->
+        <text x="155" y="22" font-family="sans-serif" font-size="13" font-weight="700" fill="#dc2626" text-anchor="middle">content-box (default — surprising)</text>
+        <rect x="30" y="34" width="250" height="120" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="155" y="56" font-family="sans-serif" font-size="11" fill="#dc2626" text-anchor="middle">padding 20px</text>
+        <rect x="64" y="64" width="182" height="72" rx="6" fill="#fca5a5" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="155" y="86" font-family="sans-serif" font-size="11" fill="#7f1d1d" text-anchor="middle">border 5px</text>
+        <rect x="84" y="76" width="142" height="48" rx="4" fill="#fff" stroke="#94a3b8"/>
+        <text x="155" y="106" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle">width: 200px (content only)</text>
+        <text x="155" y="176" font-family="sans-serif" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">Total = 200 + 40 + 10 = 250px 😱</text>
+        <text x="155" y="195" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Width grows beyond what you set.</text>
+
+        <!-- border-box (good) -->
+        <text x="505" y="22" font-family="sans-serif" font-size="13" font-weight="700" fill="#16a34a" text-anchor="middle">border-box ✅ — predictable</text>
+        <rect x="380" y="34" width="250" height="120" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="505" y="56" font-family="sans-serif" font-size="11" fill="#16a34a" text-anchor="middle">padding 20px (included)</text>
+        <rect x="414" y="64" width="182" height="72" rx="6" fill="#86efac" stroke="#4ade80" stroke-width="1.5"/>
+        <text x="505" y="86" font-family="sans-serif" font-size="11" fill="#14532d" text-anchor="middle">border 5px (included)</text>
+        <rect x="434" y="76" width="142" height="48" rx="4" fill="#fff" stroke="#94a3b8"/>
+        <text x="505" y="106" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle">content shrinks to fit</text>
+        <text x="505" y="176" font-family="sans-serif" font-size="12" fill="#16a34a" text-anchor="middle" font-weight="600">Total = always 200px ✅</text>
+        <text x="505" y="195" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Width = exactly what you set.</text>
+      </svg>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Put this at the top of every stylesheet</span></div>
+<pre><span class="sel">*</span>, <span class="sel">*::before</span>, <span class="sel">*::after</span> {
+  <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+  <span class="prop">margin</span>: <span class="val">0</span>;
+  <span class="prop">padding</span>: <span class="val">0</span>;
+}</pre>
+    </div>
+
+    <h3>Margin collapse</h3>
+    <p>When two vertical margins touch, they <strong>don't add up — the larger one wins</strong>. Only happens vertically, not horizontally.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">h2</span> { <span class="prop">margin-bottom</span>: <span class="val">30px</span>; }
+<span class="sel">p</span>  { <span class="prop">margin-top</span>: <span class="val">20px</span>; }
+
+<span class="cmt">/* Gap between h2 and p is NOT 50px.
+   It collapses to 30px (the larger value).
+   This is by design — prevents double spacing. */</span></pre>
+    </div>
+
+    <h3>Overflow</h3>
+    <p>Controls what happens when content is larger than its container.</p>
+    <table class="spec-table">
+      <tbody>
+        <tr><td>overflow: visible</td><td>Default. Content spills out — can look broken.</td></tr>
+        <tr><td>overflow: hidden</td><td>Extra content is clipped. No scrollbar.</td></tr>
+        <tr><td>overflow: scroll</td><td>Always shows scrollbars.</td></tr>
+        <tr><td>overflow: auto</td><td>Shows scrollbars only when needed. ✅ Best choice.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch3',document.querySelector('[data-page=ch3]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Selectors</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch5',document.querySelector('[data-page=ch5]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Colors &amp; Units</span></a>
+  </div>
+</div>
+
+<!-- CH5: COLORS & UNITS -->
+<div class="page" id="page-ch5">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 05</div>
+      <h2>Colors &amp; Units</h2>
+      <p class="chapter-intro">CSS has multiple ways to write colors and multiple units for sizes. Knowing which format to use — and why — makes your CSS cleaner and more adaptable across different screens.</p>
+    </div>
+
+    <h3>Color formats</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — All color formats</span></div>
+<pre><span class="cmt">/* 1. Named — 140 built-in names */</span>
+<span class="prop">color</span>: <span class="val">cornflowerblue</span>;
+
+<span class="cmt">/* 2. Hex — most common. #RRGGBB */</span>
+<span class="prop">color</span>: <span class="val">#3b82f6</span>;        <span class="cmt">/* full form */</span>
+<span class="prop">color</span>: <span class="val">#38f</span>;           <span class="cmt">/* shorthand = #3388ff */</span>
+<span class="prop">color</span>: <span class="val">#3b82f6cc</span>;      <span class="cmt">/* last 2 digits = opacity */</span>
+
+<span class="cmt">/* 3. RGB / RGBA — 0-255 per channel, alpha 0-1 */</span>
+<span class="prop">color</span>: <span class="val">rgb(59, 130, 246)</span>;
+<span class="prop">color</span>: <span class="val">rgba(59, 130, 246, 0.5)</span>; <span class="cmt">/* 50% transparent */</span>
+
+<span class="cmt">/* 4. HSL — hue (0-360°) saturation% lightness% */</span>
+<span class="prop">color</span>: <span class="val">hsl(217, 91%, 60%)</span>;
+<span class="prop">color</span>: <span class="val">hsla(217, 91%, 60%, 0.5)</span>;</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Color formats at a glance + HSL hue wheel</div>
+      <svg width="100%" viewBox="0 0 660 200" role="img">
+        <defs>
+          <linearGradient id="hue-g" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="hsl(0,80%,55%)"/>
+            <stop offset="17%" stop-color="hsl(60,80%,55%)"/>
+            <stop offset="33%" stop-color="hsl(120,80%,55%)"/>
+            <stop offset="50%" stop-color="hsl(180,80%,55%)"/>
+            <stop offset="67%" stop-color="hsl(240,80%,65%)"/>
+            <stop offset="83%" stop-color="hsl(300,80%,55%)"/>
+            <stop offset="100%" stop-color="hsl(360,80%,55%)"/>
+          </linearGradient>
+        </defs>
+        <rect x="30" y="30" width="120" height="80" rx="8" fill="#3b82f6"/>
+        <text x="90" y="78" font-family="'Fira Code',monospace" font-size="12" fill="#fff" text-anchor="middle">#3b82f6</text>
+        <text x="90" y="130" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Hex</text>
+        <text x="90" y="145" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Most common</text>
+
+        <rect x="170" y="30" width="120" height="80" rx="8" fill="rgba(59,130,246,0.4)"/>
+        <text x="230" y="78" font-family="'Fira Code',monospace" font-size="11" fill="#1e40af" text-anchor="middle">rgba(59,130,246,0.4)</text>
+        <text x="230" y="130" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">RGBA</text>
+        <text x="230" y="145" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">For transparency</text>
+
+        <rect x="310" y="30" width="120" height="80" rx="8" fill="hsl(217,91%,60%)"/>
+        <text x="370" y="78" font-family="'Fira Code',monospace" font-size="10" fill="#fff" text-anchor="middle">hsl(217,91%,60%)</text>
+        <text x="370" y="130" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">HSL</text>
+        <text x="370" y="145" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Intuitive — adjust L for shades</text>
+
+        <rect x="450" y="30" width="180" height="80" rx="8" fill="url(#hue-g)"/>
+        <text x="540" y="78" font-family="sans-serif" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">Hue 0° → 360°</text>
+        <text x="454" y="128" font-family="sans-serif" font-size="10" fill="#ef4444">0°=red</text>
+        <text x="496" y="128" font-family="sans-serif" font-size="10" fill="#eab308">60°=yellow</text>
+        <text x="545" y="128" font-family="sans-serif" font-size="10" fill="#22c55e">120°=green</text>
+        <text x="596" y="128" font-family="sans-serif" font-size="10" fill="#6366f1">240°=blue</text>
+      </svg>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>When to use which format</strong><p>Use <strong>hex</strong> for fixed design colors copied from Figma. Use <strong>rgba()</strong> when you need transparency. Use <strong>hsl()</strong> when you want to programmatically generate color variations — just change the lightness value.</p></div>
+    </div>
+
+    <h3>CSS Length units</h3>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Absolute vs Relative units</div>
+      <svg width="100%" viewBox="0 0 660 240" role="img">
+        <rect x="30" y="16" width="290" height="210" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+        <text x="175" y="42" font-family="sans-serif" font-size="14" font-weight="700" fill="#c2410c" text-anchor="middle">Absolute units</text>
+        <text x="175" y="58" font-family="sans-serif" font-size="11" fill="#ea580c" text-anchor="middle">Fixed. Same size everywhere.</text>
+        <rect x="50" y="70" width="250" height="34" rx="6" fill="#fed7aa" stroke="#fb923c" stroke-width="0.5"/>
+        <text x="120" y="92" font-family="'Fira Code',monospace" font-size="14" font-weight="600" fill="#7c2d12">px</text>
+        <text x="220" y="92" font-family="sans-serif" font-size="12" fill="#9a3412">Pixels. 1px = 1 screen dot</text>
+        <rect x="50" y="112" width="250" height="34" rx="6" fill="#fff" stroke="#fdba74" stroke-width="0.5"/>
+        <text x="120" y="134" font-family="'Fira Code',monospace" font-size="14" font-weight="600" fill="#7c2d12">pt</text>
+        <text x="220" y="134" font-family="sans-serif" font-size="12" fill="#9a3412">Points. Print only.</text>
+        <text x="175" y="200" font-family="sans-serif" font-size="11" fill="#92400e" text-anchor="middle">⚠️ Doesn't adapt to screen size</text>
+
+        <rect x="340" y="16" width="290" height="210" rx="10" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+        <text x="485" y="42" font-family="sans-serif" font-size="14" font-weight="700" fill="#065f46" text-anchor="middle">Relative units ✅</text>
+        <text x="485" y="58" font-family="sans-serif" font-size="11" fill="#10b981" text-anchor="middle">Flexible. Scale with context.</text>
+        <rect x="358" y="70" width="254" height="28" rx="5" fill="#d1fae5" stroke="#6ee7b7" stroke-width="0.5"/>
+        <text x="420" y="89" font-family="'Fira Code',monospace" font-size="13" font-weight="600" fill="#065f46">rem</text>
+        <text x="490" y="89" font-family="sans-serif" font-size="12" fill="#065f46">Relative to root font-size</text>
+        <rect x="358" y="104" width="254" height="28" rx="5" fill="#d1fae5" stroke="#6ee7b7" stroke-width="0.5"/>
+        <text x="420" y="123" font-family="'Fira Code',monospace" font-size="13" font-weight="600" fill="#065f46">em</text>
+        <text x="490" y="123" font-family="sans-serif" font-size="12" fill="#065f46">Relative to parent font-size</text>
+        <rect x="358" y="138" width="254" height="28" rx="5" fill="#d1fae5" stroke="#6ee7b7" stroke-width="0.5"/>
+        <text x="420" y="157" font-family="'Fira Code',monospace" font-size="13" font-weight="600" fill="#065f46">%</text>
+        <text x="490" y="157" font-family="sans-serif" font-size="12" fill="#065f46">Percentage of parent</text>
+        <rect x="358" y="172" width="254" height="28" rx="5" fill="#d1fae5" stroke="#6ee7b7" stroke-width="0.5"/>
+        <text x="420" y="191" font-family="'Fira Code',monospace" font-size="13" font-weight="600" fill="#065f46">vw/vh</text>
+        <text x="490" y="191" font-family="sans-serif" font-size="12" fill="#065f46">% of viewport size</text>
+      </svg>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Units in practice</span></div>
+<pre><span class="sel">:root</span> { <span class="prop">font-size</span>: <span class="val">16px</span>; } <span class="cmt">/* 1rem = 16px globally */</span>
+
+<span class="sel">body</span>   { <span class="prop">font-size</span>: <span class="val">1rem</span>; }    <span class="cmt">/* = 16px */</span>
+<span class="sel">h1</span>     { <span class="prop">font-size</span>: <span class="val">2.5rem</span>; }  <span class="cmt">/* = 40px — scales if user changes browser font size */</span>
+<span class="sel">.card</span>  { <span class="prop">padding</span>: <span class="val">1.5rem</span>; }   <span class="cmt">/* = 24px — proportional to font size */</span>
+<span class="sel">.hero</span>  { <span class="prop">height</span>: <span class="val">100vh</span>; }     <span class="cmt">/* full viewport height */</span>
+<span class="sel">.col</span>   { <span class="prop">width</span>: <span class="val">50%</span>; }        <span class="cmt">/* half of parent's width */</span>
+
+<span class="cmt">/* em — relative to parent. Use when spacing should scale with font-size */</span>
+<span class="sel">button</span> { <span class="prop">padding</span>: <span class="val">0.5em 1em</span>; } <span class="cmt">/* scales if button font-size changes */</span>
+
+<span class="cmt">/* clamp(min, preferred, max) — fluid scaling */</span>
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">clamp(1.5rem, 4vw, 3rem)</span>; } <span class="cmt">/* responsive with no media queries */</span></pre>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">📐</div>
+      <div class="callout-body"><strong>em vs rem — the simple answer</strong><p>Use <code>rem</code> for almost everything (font sizes, spacing). It's predictable — always relative to root, no compounding. Use <code>em</code> only when you specifically want something to scale relative to its direct parent's font size.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch4',document.querySelector('[data-page=ch4]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">The Box Model</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch6',document.querySelector('[data-page=ch6]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Typography</span></a>
+  </div>
+</div>
+
+<!-- CH6: TYPOGRAPHY -->
+<div class="page" id="page-ch6">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 06</div>
+      <h2>Typography</h2>
+      <p class="chapter-intro">Typography is how text looks and feels. Good typography makes content readable and conveys personality. 70% of what makes a website feel professional or cheap comes down to font choices, sizing, and spacing.</p>
+    </div>
+
+    <h3>Font properties</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">body</span> {
+  <span class="cmt">/* Font family — list fallbacks in order of preference */</span>
+  <span class="prop">font-family</span>: <span class="val">'Inter', 'Segoe UI', Arial, sans-serif</span>;
+
+  <span class="prop">font-size</span>: <span class="val">1rem</span>;    <span class="cmt">/* 16px — prefer rem over px */</span>
+
+  <span class="cmt">/* Weight: 100 (thin) → 400 (normal) → 700 (bold) → 900 (black) */</span>
+  <span class="prop">font-weight</span>: <span class="val">400</span>;
+
+  <span class="prop">font-style</span>: <span class="val">italic</span>;  <span class="cmt">/* or normal */</span>
+
+  <span class="cmt">/* Line height — space between lines. Unitless value is best. */</span>
+  <span class="prop">line-height</span>: <span class="val">1.6</span>;   <span class="cmt">/* 1.6 × font-size */</span>
+
+  <span class="cmt">/* Letter spacing (tracking) */</span>
+  <span class="prop">letter-spacing</span>: <span class="val">0.5px</span>;
+  <span class="prop">letter-spacing</span>: <span class="val">-0.02em</span>; <span class="cmt">/* negative = tighter (good for big headings) */</span>
+
+  <span class="prop">text-align</span>: <span class="val">left</span>;   <span class="cmt">/* left | center | right | justify */</span>
+
+  <span class="prop">text-decoration</span>: <span class="val">none</span>;        <span class="cmt">/* remove underline from links */</span>
+  <span class="prop">text-transform</span>: <span class="val">uppercase</span>;    <span class="cmt">/* CAPITALIZE ALL */</span>
+  <span class="prop">text-transform</span>: <span class="val">capitalize</span>;   <span class="cmt">/* First Letter Each Word */</span>
+}</pre>
+    </div>
+
+    <h3>Font weight reference</h3>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Font weight — 100 to 900</div>
+      <svg width="100%" viewBox="0 0 660 230" role="img">
+        <text x="40" y="40"  font-family="Inter,sans-serif" font-size="20" font-weight="100" fill="#374151">100 — Thin. Barely there.</text>
+        <text x="40" y="68"  font-family="Inter,sans-serif" font-size="20" font-weight="200" fill="#374151">200 — Extra light.</text>
+        <text x="40" y="96"  font-family="Inter,sans-serif" font-size="20" font-weight="300" fill="#374151">300 — Light. Good for body text.</text>
+        <text x="40" y="124" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#374151">400 — Normal. The default.</text>
+        <text x="40" y="152" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="#374151">500 — Medium. Slightly bold.</text>
+        <text x="40" y="180" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#374151">600 — Semibold. Good for labels.</text>
+        <text x="40" y="208" font-family="Inter,sans-serif" font-size="20" font-weight="700" fill="#374151">700 — Bold. Headings.</text>
+        <text x="340" y="208" font-family="Inter,sans-serif" font-size="20" font-weight="900" fill="#374151">900 — Black. Maximum impact.</text>
+      </svg>
+    </div>
+
+    <h3>Using Google Fonts</h3>
+    <p>Google Fonts is a free library of web fonts. Import in HTML, then use in CSS:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">HTML — in &lt;head&gt;</span></div>
+<pre>&lt;<span class="sel">link</span> <span class="prop">rel</span>="<span class="str">preconnect</span>" <span class="prop">href</span>="<span class="str">https://fonts.googleapis.com</span>"&gt;
+&lt;<span class="sel">link</span> <span class="prop">href</span>="<span class="str">https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap</span>"
+      <span class="prop">rel</span>="<span class="str">stylesheet</span>"&gt;</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">body</span> { <span class="prop">font-family</span>: <span class="val">'Inter', sans-serif</span>; }</pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">🎨</div>
+      <div class="callout-body"><strong>Professional typography rules</strong><p>Use 2 fonts max — one for headings, one for body. Set <code>line-height: 1.6–1.7</code> for body text and <code>line-height: 1.1–1.2</code> for large headings. Use negative letter-spacing on large display text — it looks tighter and more premium.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch5',document.querySelector('[data-page=ch5]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Colors &amp; Units</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch7',document.querySelector('[data-page=ch7]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Backgrounds</span></a>
+  </div>
+</div>
+
+<!-- CH7: BACKGROUNDS -->
+<div class="page" id="page-ch7">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 07</div>
+      <h2>Backgrounds</h2>
+      <p class="chapter-intro">Backgrounds are what sit behind your content. They can be solid colors, images, gradients, or combinations. Getting backgrounds right is what separates a flat boring page from something that feels alive and polished.</p>
+    </div>
+
+    <h3>background-color</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">.hero</span>  { <span class="prop">background-color</span>: <span class="val">#1e293b</span>; }
+<span class="sel">.card</span>  { <span class="prop">background-color</span>: <span class="val">white</span>; }
+<span class="sel">.glass</span> { <span class="prop">background-color</span>: <span class="val">rgba(255, 255, 255, 0.1)</span>; } <span class="cmt">/* translucent */</span></pre>
+    </div>
+
+    <h3>background-image &amp; gradients</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* Image */</span>
+<span class="sel">.hero</span> {
+  <span class="prop">background-image</span>: <span class="val">url('hero.jpg')</span>;
+  <span class="prop">background-size</span>: <span class="val">cover</span>;       <span class="cmt">/* fill area, may crop */</span>
+  <span class="prop">background-position</span>: <span class="val">center</span>;  <span class="cmt">/* center the image */</span>
+  <span class="prop">background-repeat</span>: <span class="val">no-repeat</span>; <span class="cmt">/* don't tile */</span>
+}
+
+<span class="cmt">/* Linear gradient — direction then color stops */</span>
+<span class="prop">background</span>: <span class="val">linear-gradient(to right, #3b82f6, #8b5cf6)</span>;
+<span class="prop">background</span>: <span class="val">linear-gradient(135deg, #1e293b 0%, #0f172a 100%)</span>;
+
+<span class="cmt">/* Radial gradient — circular from center */</span>
+<span class="prop">background</span>: <span class="val">radial-gradient(circle, #3b82f6, #1e293b)</span>;
+
+<span class="cmt">/* Image + gradient overlay (comma-separates layers) */</span>
+<span class="sel">.overlay</span> {
+  <span class="prop">background</span>: <span class="val">linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+               url('photo.jpg') center/cover</span>;
+}</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Gradient types &amp; directions</div>
+      <svg width="100%" viewBox="0 0 660 170" role="img">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient>
+          <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#1e293b"/></linearGradient>
+          <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ef4444"/></linearGradient>
+          <radialGradient id="g4"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e293b"/></radialGradient>
+        </defs>
+        <rect x="30" y="20" width="130" height="90" rx="8" fill="url(#g1)"/>
+        <text x="95" y="130" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">to right</text>
+        <text x="95" y="145" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">linear</text>
+        <rect x="178" y="20" width="130" height="90" rx="8" fill="url(#g2)"/>
+        <text x="243" y="130" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">to bottom</text>
+        <text x="243" y="145" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">linear</text>
+        <rect x="326" y="20" width="130" height="90" rx="8" fill="url(#g3)"/>
+        <text x="391" y="130" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">135deg diagonal</text>
+        <text x="391" y="145" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">linear</text>
+        <rect x="474" y="20" width="156" height="90" rx="8" fill="url(#g4)"/>
+        <text x="552" y="130" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">circle from center</text>
+        <text x="552" y="145" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">radial</text>
+      </svg>
+    </div>
+
+    <h3>background-size</h3>
+    <table class="compare-table">
+      <thead><tr><th>Value</th><th>What it does</th><th>Use case</th></tr></thead>
+      <tbody>
+        <tr><td><code>cover</code></td><td>Scales to fill — may crop</td><td>Hero images, full-screen backgrounds</td></tr>
+        <tr><td><code>contain</code></td><td>Scales to fit — may have empty space</td><td>Logos, icons</td></tr>
+        <tr><td><code>100% 100%</code></td><td>Stretches exactly — distorts</td><td>Rarely used</td></tr>
+        <tr><td><code>300px 200px</code></td><td>Fixed pixel size</td><td>Patterns, decorative tiles</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Shorthand</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — background shorthand</span></div>
+<pre><span class="cmt">/* background: color image repeat position/size attachment */</span>
+<span class="sel">.hero</span> {
+  <span class="prop">background</span>: <span class="val">#0f172a url('hero.jpg') no-repeat center/cover fixed</span>;
+}
+<span class="cmt">/* Color is a fallback if image fails to load */</span></pre>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch6',document.querySelector('[data-page=ch6]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Typography</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch8',document.querySelector('[data-page=ch8]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Borders &amp; Shadows</span></a>
+  </div>
+</div>
+
+<!-- CH8: BORDERS & SHADOWS -->
+<div class="page" id="page-ch8">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 08</div>
+      <h2>Borders &amp; Shadows</h2>
+      <p class="chapter-intro">Borders define element edges. Shadows add depth. Used correctly they make designs feel three-dimensional and polished. Used incorrectly they make everything look like a 2003 website.</p>
+    </div>
+
+    <h3>Borders</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* Shorthand: width style color */</span>
+<span class="sel">.box</span>        { <span class="prop">border</span>: <span class="val">1px solid #e4e7ef</span>; }
+<span class="sel">.bottom-line</span> { <span class="prop">border-bottom</span>: <span class="val">2px solid #3b82f6</span>; }
+<span class="sel">.left-accent</span> { <span class="prop">border-left</span>: <span class="val">4px solid #10b981</span>; }
+
+<span class="cmt">/* Styles */</span>
+<span class="sel">.solid</span>  { <span class="prop">border</span>: <span class="val">2px solid black</span>; }
+<span class="sel">.dashed</span> { <span class="prop">border</span>: <span class="val">2px dashed black</span>; }
+<span class="sel">.dotted</span> { <span class="prop">border</span>: <span class="val">2px dotted black</span>; }
+
+<span class="cmt">/* Rounded corners */</span>
+<span class="sel">.card</span>   { <span class="prop">border-radius</span>: <span class="val">8px</span>; }       <span class="cmt">/* all corners */</span>
+<span class="sel">.pill</span>   { <span class="prop">border-radius</span>: <span class="val">9999px</span>; }   <span class="cmt">/* fully rounded */</span>
+<span class="sel">.circle</span> { <span class="prop">border-radius</span>: <span class="val">50%</span>; }     <span class="cmt">/* circle (width must = height) */</span>
+<span class="sel">.custom</span> { <span class="prop">border-radius</span>: <span class="val">12px 4px</span>; } <span class="cmt">/* top-left/bottom-right top-right/bottom-left */</span></pre>
+    </div>
+
+    <h3>box-shadow</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* box-shadow: x-offset y-offset blur spread color */</span>
+<span class="sel">.xs</span>    { <span class="prop">box-shadow</span>: <span class="val">0 1px 3px rgba(0,0,0,0.12)</span>; }   <span class="cmt">/* subtle */</span>
+<span class="sel">.sm</span>    { <span class="prop">box-shadow</span>: <span class="val">0 4px 12px rgba(0,0,0,0.1)</span>; }   <span class="cmt">/* card */</span>
+<span class="sel">.md</span>    { <span class="prop">box-shadow</span>: <span class="val">0 10px 30px rgba(0,0,0,0.12)</span>; } <span class="cmt">/* lifted */</span>
+<span class="sel">.modal</span> { <span class="prop">box-shadow</span>: <span class="val">0 24px 64px rgba(0,0,0,0.25)</span>; } <span class="cmt">/* floating */</span>
+
+<span class="cmt">/* Inner shadow */</span>
+<span class="sel">.input</span> { <span class="prop">box-shadow</span>: <span class="val">inset 0 2px 4px rgba(0,0,0,0.06)</span>; }
+
+<span class="cmt">/* Colored glow */</span>
+<span class="sel">.glow</span>  { <span class="prop">box-shadow</span>: <span class="val">0 0 30px rgba(59,130,246,0.4)</span>; }
+
+<span class="cmt">/* Multiple shadows — add depth layers */</span>
+<span class="sel">.layered</span> {
+  <span class="prop">box-shadow</span>: <span class="val">0 1px 2px rgba(0,0,0,0.05),
+               0 4px 12px rgba(0,0,0,0.08),
+               0 16px 40px rgba(0,0,0,0.06)</span>;
+}</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Shadow levels — subtle to dramatic</div>
+      <svg width="100%" viewBox="0 0 660 160" role="img">
+        <rect x="30" y="28" width="120" height="70" rx="8" fill="white" style="filter:drop-shadow(0 1px 3px rgba(0,0,0,0.14))"/>
+        <text x="90" y="68" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle">xs</text>
+        <text x="90" y="118" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle" font-weight="600">0 1px 3px</text>
+
+        <rect x="180" y="24" width="120" height="70" rx="8" fill="white" style="filter:drop-shadow(0 4px 12px rgba(0,0,0,0.12))"/>
+        <text x="240" y="64" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle">sm — card</text>
+        <text x="240" y="118" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle" font-weight="600">0 4px 12px</text>
+
+        <rect x="330" y="18" width="120" height="70" rx="8" fill="white" style="filter:drop-shadow(0 10px 28px rgba(0,0,0,0.16))"/>
+        <text x="390" y="58" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle">md — lifted</text>
+        <text x="390" y="118" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle" font-weight="600">0 10px 28px</text>
+
+        <rect x="480" y="10" width="150" height="70" rx="8" fill="white" style="filter:drop-shadow(0 24px 60px rgba(0,0,0,0.24))"/>
+        <text x="555" y="50" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle">xl — modal</text>
+        <text x="555" y="118" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle" font-weight="600">0 24px 60px</text>
+      </svg>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>Shadow rules</strong><p>Keep shadows soft — use <code>rgba(0,0,0,0.1)</code> not <code>black</code>. Never use harsh dark shadows — they look dated. Consistent "light source" direction (usually top-left). One shadow level per UI elevation: cards, modals, and tooltips each have different shadow depths.</p></div>
+    </div>
+
+    <h3>text-shadow</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* text-shadow: x-offset y-offset blur color */</span>
+<span class="sel">h1</span>         { <span class="prop">text-shadow</span>: <span class="val">0 1px 3px rgba(0,0,0,0.2)</span>; }  <span class="cmt">/* subtle depth */</span>
+<span class="sel">.neon-text</span> { <span class="prop">text-shadow</span>: <span class="val">0 0 20px rgba(59,130,246,0.8)</span>; } <span class="cmt">/* glow */</span></pre>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch7',document.querySelector('[data-page=ch7]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Backgrounds</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch9',document.querySelector('[data-page=ch9]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Display &amp; Visibility</span></a>
+  </div>
+</div>
+
+<!-- CH9: DISPLAY -->
+<div class="page" id="page-ch9">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 09</div>
+      <h2>Display &amp; Visibility</h2>
+      <p class="chapter-intro">The <code>display</code> property is one of the most powerful in CSS. It controls whether an element participates in the flow, how it takes up space, and how its children are arranged.</p>
+    </div>
+
+    <h3>The main display values</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* block — full width, starts on new line. Default for div, p, h1, section */</span>
+<span class="sel">div</span> { <span class="prop">display</span>: <span class="val">block</span>; }
+
+<span class="cmt">/* inline — only as wide as content, stays in text flow. Default for span, a, strong */</span>
+<span class="sel">span</span> { <span class="prop">display</span>: <span class="val">inline</span>; }
+
+<span class="cmt">/* inline-block — inline placement BUT respects width, height, padding */</span>
+<span class="sel">button</span> { <span class="prop">display</span>: <span class="val">inline-block</span>; }
+
+<span class="cmt">/* none — removes from page entirely. No space left behind. */</span>
+<span class="sel">.hidden</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+
+<span class="cmt">/* flex — activates Flexbox on children (next chapter) */</span>
+<span class="sel">.row</span> { <span class="prop">display</span>: <span class="val">flex</span>; }
+
+<span class="cmt">/* grid — activates CSS Grid on children (chapter 12) */</span>
+<span class="sel">.layout</span> { <span class="prop">display</span>: <span class="val">grid</span>; }</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Block vs Inline vs Inline-block — how they take up space</div>
+      <svg width="100%" viewBox="0 0 660 250" role="img">
+        <!-- Block -->
+        <text x="120" y="26" font-family="sans-serif" font-size="13" font-weight="700" fill="#1e40af" text-anchor="middle">display: block</text>
+        <rect x="30" y="36" width="180" height="38" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="120" y="61" font-family="sans-serif" font-size="12" fill="#1d4ed8" text-anchor="middle">Block element 1</text>
+        <rect x="30" y="82" width="180" height="38" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+        <text x="120" y="107" font-family="sans-serif" font-size="12" fill="#1d4ed8" text-anchor="middle">Block element 2</text>
+        <text x="120" y="148" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Takes full width.</text>
+        <text x="120" y="163" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Stacks vertically.</text>
+
+        <!-- Inline -->
+        <text x="380" y="26" font-family="sans-serif" font-size="13" font-weight="700" fill="#065f46" text-anchor="middle">display: inline</text>
+        <rect x="248" y="42" width="64" height="30" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+        <text x="280" y="63" font-family="sans-serif" font-size="11" fill="#065f46" text-anchor="middle">Span</text>
+        <rect x="320" y="42" width="56" height="30" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+        <text x="348" y="63" font-family="sans-serif" font-size="11" fill="#065f46" text-anchor="middle">link</text>
+        <rect x="384" y="42" width="64" height="30" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+        <text x="416" y="63" font-family="sans-serif" font-size="11" fill="#065f46" text-anchor="middle">strong</text>
+        <text x="380" y="108" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Flows in text, side by side.</text>
+        <text x="380" y="123" font-family="sans-serif" font-size="11" fill="#ef4444" text-anchor="middle">Width/height are IGNORED.</text>
+
+        <!-- Inline-block -->
+        <text x="570" y="26" font-family="sans-serif" font-size="13" font-weight="700" fill="#7c3aed" text-anchor="middle">inline-block</text>
+        <rect x="500" y="36" width="80" height="55" rx="6" fill="#ede9fe" stroke="#c4b5fd"/>
+        <text x="540" y="68" font-family="sans-serif" font-size="11" fill="#5b21b6" text-anchor="middle">Box A</text>
+        <rect x="590" y="52" width="60" height="36" rx="6" fill="#ede9fe" stroke="#c4b5fd"/>
+        <text x="620" y="74" font-family="sans-serif" font-size="11" fill="#5b21b6" text-anchor="middle">Box B</text>
+        <text x="570" y="120" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Side by side,</text>
+        <text x="570" y="135" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">but width/height</text>
+        <text x="570" y="150" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">are respected.</text>
+
+        <!-- Comparison row at bottom -->
+        <rect x="30" y="190" width="600" height="1" fill="#e4e7ef"/>
+        <text x="120" y="215" font-family="sans-serif" font-size="11" fill="#3b82f6" text-anchor="middle">Full width, new line</text>
+        <text x="380" y="215" font-family="sans-serif" font-size="11" fill="#10b981" text-anchor="middle">Fits content, no sizing</text>
+        <text x="570" y="215" font-family="sans-serif" font-size="11" fill="#8b5cf6" text-anchor="middle">Fits content + sizing</text>
+      </svg>
+    </div>
+
+    <h3>Hiding elements: three ways</h3>
+    <table class="compare-table">
+      <thead><tr><th>Property</th><th>Visible?</th><th>Takes space?</th><th>Clickable?</th><th>Use when</th></tr></thead>
+      <tbody>
+        <tr><td><code>display: none</code></td><td><span class="tag red">No</span></td><td><span class="tag red">No</span></td><td><span class="tag red">No</span></td><td>Remove completely</td></tr>
+        <tr><td><code>visibility: hidden</code></td><td><span class="tag red">No</span></td><td><span class="tag green">Yes</span></td><td><span class="tag red">No</span></td><td>Hide but keep layout space</td></tr>
+        <tr><td><code>opacity: 0</code></td><td><span class="tag red">No</span></td><td><span class="tag green">Yes</span></td><td><span class="tag green">Yes</span></td><td>Fade effects (still interactive!)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warning">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>opacity: 0 is still interactive</strong><p>An element with <code>opacity: 0</code> is invisible but still receives mouse clicks and keyboard focus. If you want to hide something from users completely, use <code>display: none</code> instead.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch8',document.querySelector('[data-page=ch8]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Borders &amp; Shadows</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch10',document.querySelector('[data-page=ch10]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Positioning</span></a>
+  </div>
+</div>
+
+<!-- CH10: POSITIONING -->
+<div class="page" id="page-ch10">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 10</div>
+      <h2>Positioning</h2>
+      <p class="chapter-intro">By default, elements stack in the order they appear in HTML. The <code>position</code> property lets you break out of that — move elements freely, pin them to the screen, or overlap them intentionally.</p>
+    </div>
+
+    <h3>The five position values</h3>
+    <div class="diagram-wrap">
+      <div class="diagram-title">All five position values — how each behaves</div>
+      <svg width="100%" viewBox="0 0 660 340" role="img">
+        <defs><marker id="parr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5"/></marker></defs>
+
+        <!-- static -->
+        <rect x="20" y="20" width="140" height="90" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+        <rect x="32" y="32" width="116" height="28" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="0.5"/>
+        <text x="90" y="51" font-family="sans-serif" font-size="11" fill="#475569" text-anchor="middle">element 1</text>
+        <rect x="32" y="68" width="116" height="28" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="0.5"/>
+        <text x="90" y="87" font-family="sans-serif" font-size="11" fill="#475569" text-anchor="middle">element 2</text>
+        <text x="90" y="126" font-family="sans-serif" font-size="12" font-weight="700" fill="#374151" text-anchor="middle">static</text>
+        <text x="90" y="140" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Normal flow.</text>
+        <text x="90" y="154" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">top/left ignored.</text>
+
+        <!-- relative -->
+        <rect x="178" y="20" width="140" height="90" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+        <rect x="190" y="32" width="116" height="28" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="0.5"/>
+        <text x="248" y="51" font-family="sans-serif" font-size="11" fill="#1d4ed8" text-anchor="middle">element 1</text>
+        <rect x="210" y="64" width="116" height="28" rx="4" fill="#3b82f6"/>
+        <text x="268" y="83" font-family="sans-serif" font-size="11" fill="white" text-anchor="middle">offset from normal</text>
+        <text x="248" y="126" font-family="sans-serif" font-size="12" font-weight="700" fill="#1e40af" text-anchor="middle">relative</text>
+        <text x="248" y="140" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Shifts from natural spot.</text>
+        <text x="248" y="154" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Original space reserved.</text>
+
+        <!-- absolute -->
+        <rect x="336" y="20" width="140" height="90" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-dasharray="4 2"/>
+        <text x="346" y="36" font-family="sans-serif" font-size="9" fill="#16a34a">positioned parent</text>
+        <rect x="380" y="44" width="84" height="54" rx="6" fill="#22c55e"/>
+        <text x="422" y="75" font-family="sans-serif" font-size="11" fill="white" text-anchor="middle">absolute</text>
+        <text x="406" y="126" font-family="sans-serif" font-size="12" font-weight="700" fill="#166534" text-anchor="middle">absolute</text>
+        <text x="406" y="140" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Relative to nearest</text>
+        <text x="406" y="154" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">positioned parent.</text>
+
+        <!-- fixed -->
+        <rect x="494" y="20" width="150" height="90" rx="8" fill="#fef9c3" stroke="#fde047"/>
+        <text x="520" y="36" font-family="sans-serif" font-size="9" fill="#92400e">viewport</text>
+        <rect x="556" y="58" width="74" height="32" rx="5" fill="#f59e0b"/>
+        <text x="593" y="79" font-family="sans-serif" font-size="10" fill="white" text-anchor="middle">fixed btn</text>
+        <text x="569" y="126" font-family="sans-serif" font-size="12" font-weight="700" fill="#92400e" text-anchor="middle">fixed</text>
+        <text x="569" y="140" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Pinned to viewport.</text>
+        <text x="569" y="154" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Doesn't scroll.</text>
+
+        <!-- sticky full width -->
+        <rect x="20" y="190" width="620" height="110" rx="8" fill="#f5f3ff" stroke="#ddd6fe"/>
+        <text x="240" y="215" font-family="sans-serif" font-size="12" fill="#7c3aed">...scrolling content above the sticky element...</text>
+        <rect x="40" y="222" width="580" height="34" rx="6" fill="#8b5cf6"/>
+        <text x="330" y="244" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">sticky nav — flows normally, then pins at top: 0 when you scroll</text>
+        <text x="240" y="282" font-family="sans-serif" font-size="12" fill="#7c3aed">...scrolling content below...</text>
+        <text x="330" y="320" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" text-anchor="middle">sticky</text>
+      </svg>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* relative — offset from natural position. Original space is kept. */</span>
+<span class="sel">.nudged</span> { <span class="prop">position</span>: <span class="val">relative</span>; <span class="prop">top</span>: <span class="val">-4px</span>; }
+
+<span class="cmt">/* absolute — inside a relative parent. Removed from normal flow. */</span>
+<span class="sel">.card</span>       { <span class="prop">position</span>: <span class="val">relative</span>; }  <span class="cmt">/* parent MUST be positioned */</span>
+<span class="sel">.card-badge</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>: <span class="val">12px</span>;
+  <span class="prop">right</span>: <span class="val">12px</span>;
+}
+
+<span class="cmt">/* fixed — pinned to viewport. Always visible (navbar, chat button) */</span>
+<span class="sel">.navbar</span> {
+  <span class="prop">position</span>: <span class="val">fixed</span>;
+  <span class="prop">top</span>: <span class="val">0</span>; <span class="prop">left</span>: <span class="val">0</span>;
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">z-index</span>: <span class="val">100</span>;
+}
+
+<span class="cmt">/* sticky — scrolls with page until threshold, then pins */</span>
+<span class="sel">.section-header</span> {
+  <span class="prop">position</span>: <span class="val">sticky</span>;
+  <span class="prop">top</span>: <span class="val">0</span>;             <span class="cmt">/* sticks when it hits the top */</span>
+  <span class="prop">background</span>: <span class="val">white</span>; <span class="cmt">/* needs background or content shows through */</span>
+  <span class="prop">z-index</span>: <span class="val">10</span>;
+}</pre>
+    </div>
+
+    <div class="callout gotcha">
+      <div class="callout-icon">🚫</div>
+      <div class="callout-body"><strong>The most common position mistake</strong><p><code>position: absolute</code> positions relative to the nearest ancestor with <code>position</code> set to anything other than <code>static</code>. If no ancestor is positioned, it escapes all the way to the page root. Always add <code>position: relative</code> to the parent container.</p></div>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>sticky needs a threshold value</strong><p><code>position: sticky</code> does nothing without a threshold like <code>top: 0</code>. And it only works if the parent has enough height to scroll — a sticky element inside a short container won't stick.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch9',document.querySelector('[data-page=ch9]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Display &amp; Visibility</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch11',document.querySelector('[data-page=ch11]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Flexbox</span></a>
+  </div>
+</div>
+
+<!-- CH11: FLEXBOX -->
+<div class="page" id="page-ch11">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 11</div>
+      <h2>Flexbox</h2>
+      <p class="chapter-intro">Flexbox is a one-dimensional layout system. It arranges items in a row or column, handles alignment, distributes space, and centers things — all with just a few properties. It's the most-used layout tool in modern CSS.</p>
+    </div>
+
+    <h3>Container vs Items — the two roles</h3>
+    <div class="callout info">
+      <div class="callout-icon">📦</div>
+      <div class="callout-body"><strong>Key concept</strong><p>You apply <code>display: flex</code> to the <strong>parent</strong> (container). Its direct children automatically become <strong>flex items</strong>. Container properties control the group. Item properties control individual elements.</p></div>
+    </div>
+
+    <h3>Main Axis &amp; Cross Axis</h3>
+    <p>This is the most important concept in Flexbox. Everything else depends on understanding axes.</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Axes in Flexbox — they flip when direction changes</div>
+      <svg width="100%" viewBox="0 0 660 310" role="img">
+        <defs>
+          <marker id="max" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#3b82f6" stroke-width="1.5"/></marker>
+          <marker id="cax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8b5cf6" stroke-width="1.5"/></marker>
+        </defs>
+
+        <!-- flex-direction: row (left) -->
+        <text x="200" y="22" font-family="sans-serif" font-size="12" font-weight="700" fill="#374151" text-anchor="middle">flex-direction: row (default)</text>
+        <rect x="30" y="34" width="340" height="140" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+        <text x="50" y="54" font-family="sans-serif" font-size="11" fill="#1e40af" font-weight="600">display: flex container</text>
+        <rect x="50" y="62" width="90" height="80" rx="7" fill="#3b82f6"/><text x="95" y="107" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">Item 1</text>
+        <rect x="152" y="62" width="90" height="80" rx="7" fill="#2563eb"/><text x="197" y="107" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">Item 2</text>
+        <rect x="254" y="62" width="90" height="80" rx="7" fill="#1d4ed8"/><text x="299" y="107" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">Item 3</text>
+        <!-- main axis arrow -->
+        <line x1="50" y1="196" x2="355" y2="196" stroke="#3b82f6" stroke-width="2" marker-end="url(#max)"/>
+        <text x="200" y="212" font-family="sans-serif" font-size="11" fill="#3b82f6" text-anchor="middle" font-weight="600">Main Axis → justify-content</text>
+        <!-- cross axis arrow -->
+        <line x1="390" y1="44" x2="390" y2="168" stroke="#8b5cf6" stroke-width="2" marker-end="url(#cax)"/>
+        <text x="430" y="116" font-family="sans-serif" font-size="10" fill="#8b5cf6" font-weight="600" transform="rotate(90,430,116)">Cross Axis — align-items</text>
+
+        <!-- flex-direction: column (right) -->
+        <text x="565" y="22" font-family="sans-serif" font-size="12" font-weight="700" fill="#374151" text-anchor="middle">flex-direction: column</text>
+        <rect x="470" y="34" width="180" height="220" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+        <text x="490" y="54" font-family="sans-serif" font-size="11" fill="#5b21b6" font-weight="600">display: flex container</text>
+        <rect x="490" y="62" width="140" height="42" rx="6" fill="#8b5cf6"/><text x="560" y="88" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">Item 1</text>
+        <rect x="490" y="112" width="140" height="42" rx="6" fill="#7c3aed"/><text x="560" y="138" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">Item 2</text>
+        <rect x="490" y="162" width="140" height="42" rx="6" fill="#6d28d9"/><text x="560" y="188" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle" font-weight="600">Item 3</text>
+        <!-- column main axis -->
+        <line x1="460" y1="62" x2="460" y2="245" stroke="#8b5cf6" stroke-width="2" marker-end="url(#cax)"/>
+        <text x="440" y="155" font-family="sans-serif" font-size="10" fill="#8b5cf6" font-weight="600" text-anchor="middle" transform="rotate(-90,440,155)">Main Axis ↓ justify-content</text>
+
+        <text x="330" y="290" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Rule: justify-content = main axis. align-items = cross axis. When direction flips, so do the axes.</text>
+      </svg>
+    </div>
+
+    <h3>Container properties</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Flex Container</span></div>
+<pre><span class="sel">.container</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+
+  <span class="cmt">/* Direction of main axis */</span>
+  <span class="prop">flex-direction</span>: <span class="val">row</span>;          <span class="cmt">/* → default */</span>
+  <span class="prop">flex-direction</span>: <span class="val">column</span>;       <span class="cmt">/* ↓ stack vertically */</span>
+  <span class="prop">flex-direction</span>: <span class="val">row-reverse</span>;  <span class="cmt">/* ← right to left */</span>
+
+  <span class="cmt">/* Distribute space along MAIN axis */</span>
+  <span class="prop">justify-content</span>: <span class="val">flex-start</span>;   <span class="cmt">/* pack to start (default) */</span>
+  <span class="prop">justify-content</span>: <span class="val">flex-end</span>;     <span class="cmt">/* pack to end */</span>
+  <span class="prop">justify-content</span>: <span class="val">center</span>;       <span class="cmt">/* center all */</span>
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>; <span class="cmt">/* gaps between items, no outer gap */</span>
+  <span class="prop">justify-content</span>: <span class="val">space-around</span>;  <span class="cmt">/* equal space around each item */</span>
+  <span class="prop">justify-content</span>: <span class="val">space-evenly</span>;  <span class="cmt">/* perfectly equal gaps everywhere */</span>
+
+  <span class="cmt">/* Align on CROSS axis */</span>
+  <span class="prop">align-items</span>: <span class="val">stretch</span>;    <span class="cmt">/* fill cross axis height (default) */</span>
+  <span class="prop">align-items</span>: <span class="val">flex-start</span>; <span class="cmt">/* align to start */</span>
+  <span class="prop">align-items</span>: <span class="val">center</span>;     <span class="cmt">/* center vertically */</span>
+  <span class="prop">align-items</span>: <span class="val">flex-end</span>;   <span class="cmt">/* align to end */</span>
+  <span class="prop">align-items</span>: <span class="val">baseline</span>;   <span class="cmt">/* align text baselines */</span>
+
+  <span class="cmt">/* Gap between items */</span>
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+  <span class="prop">gap</span>: <span class="val">16px 24px</span>;  <span class="cmt">/* row-gap column-gap */</span>
+
+  <span class="cmt">/* Wrapping */</span>
+  <span class="prop">flex-wrap</span>: <span class="val">nowrap</span>; <span class="cmt">/* default — items shrink to fit */</span>
+  <span class="prop">flex-wrap</span>: <span class="val">wrap</span>;   <span class="cmt">/* items wrap to next line when no space */</span>
+}</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">justify-content values — visualized</div>
+      <svg width="100%" viewBox="0 0 660 290" role="img">
+        <rect x="20" y="10" width="290" height="54" rx="6" fill="#f0f9ff" stroke="#bae6fd"/>
+        <rect x="30" y="20" width="52" height="34" rx="4" fill="#38bdf8"/>
+        <rect x="90" y="20" width="52" height="34" rx="4" fill="#38bdf8"/>
+        <rect x="150" y="20" width="52" height="34" rx="4" fill="#38bdf8"/>
+        <text x="155" y="80" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">flex-start</text>
+
+        <rect x="350" y="10" width="290" height="54" rx="6" fill="#f0f9ff" stroke="#bae6fd"/>
+        <rect x="450" y="20" width="52" height="34" rx="4" fill="#0ea5e9"/>
+        <rect x="510" y="20" width="52" height="34" rx="4" fill="#0ea5e9"/>
+        <rect x="570" y="20" width="52" height="34" rx="4" fill="#0ea5e9"/>
+        <text x="495" y="80" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">flex-end</text>
+
+        <rect x="20" y="100" width="290" height="54" rx="6" fill="#f0f9ff" stroke="#bae6fd"/>
+        <rect x="108" y="110" width="52" height="34" rx="4" fill="#0284c7"/>
+        <rect x="168" y="110" width="52" height="34" rx="4" fill="#0284c7"/>
+        <rect x="228" y="110" width="52" height="34" rx="4" fill="#0284c7"/>
+        <text x="155" y="170" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">center</text>
+
+        <rect x="350" y="100" width="290" height="54" rx="6" fill="#f0fdf4" stroke="#bbf7d0"/>
+        <rect x="360" y="110" width="52" height="34" rx="4" fill="#22c55e"/>
+        <rect x="480" y="110" width="52" height="34" rx="4" fill="#22c55e"/>
+        <rect x="578" y="110" width="52" height="34" rx="4" fill="#22c55e"/>
+        <text x="495" y="170" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">space-between</text>
+
+        <rect x="20" y="200" width="290" height="54" rx="6" fill="#fdf4ff" stroke="#e9d5ff"/>
+        <rect x="44" y="210" width="52" height="34" rx="4" fill="#a855f7"/>
+        <rect x="142" y="210" width="52" height="34" rx="4" fill="#a855f7"/>
+        <rect x="240" y="210" width="52" height="34" rx="4" fill="#a855f7"/>
+        <text x="155" y="266" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">space-around</text>
+
+        <rect x="350" y="200" width="290" height="54" rx="6" fill="#fff7ed" stroke="#fed7aa"/>
+        <rect x="380" y="210" width="52" height="34" rx="4" fill="#f97316"/>
+        <rect x="469" y="210" width="52" height="34" rx="4" fill="#f97316"/>
+        <rect x="558" y="210" width="52" height="34" rx="4" fill="#f97316"/>
+        <text x="495" y="266" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">space-evenly</text>
+      </svg>
+    </div>
+
+    <h3>Item properties</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Flex Items</span></div>
+<pre><span class="sel">.item</span> {
+  <span class="cmt">/* flex: grow shrink basis */</span>
+  <span class="prop">flex</span>: <span class="val">1</span>;           <span class="cmt">/* grow to fill available space equally */</span>
+  <span class="prop">flex</span>: <span class="val">0 0 200px</span>;   <span class="cmt">/* fixed 200px, doesn't grow or shrink */</span>
+  <span class="prop">flex</span>: <span class="val">2</span>;           <span class="cmt">/* grows twice as much as flex:1 items */</span>
+  <span class="prop">flex</span>: <span class="val">1 1 250px</span>;   <span class="cmt">/* min 250px, can grow/shrink — great for wrap */</span>
+
+  <span class="cmt">/* Override align-items for just this item */</span>
+  <span class="prop">align-self</span>: <span class="val">center</span>;
+
+  <span class="cmt">/* Change visual order without changing HTML */</span>
+  <span class="prop">order</span>: <span class="val">2</span>; <span class="cmt">/* default 0, lower = earlier */</span>
+}</pre>
+    </div>
+
+    <h3>Essential Flexbox patterns</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Patterns you'll use constantly</span></div>
+<pre><span class="cmt">/* Perfect centering — horizontal AND vertical */</span>
+<span class="sel">.center</span> { <span class="prop">display</span>: <span class="val">flex</span>; <span class="prop">justify-content</span>: <span class="val">center</span>; <span class="prop">align-items</span>: <span class="val">center</span>; }
+
+<span class="cmt">/* Navbar: logo left | items center | button right */</span>
+<span class="sel">.navbar</span> { <span class="prop">display</span>: <span class="val">flex</span>; <span class="prop">justify-content</span>: <span class="val">space-between</span>; <span class="prop">align-items</span>: <span class="val">center</span>; }
+
+<span class="cmt">/* Equal-width cards in a row */</span>
+<span class="sel">.card-row</span> { <span class="prop">display</span>: <span class="val">flex</span>; <span class="prop">gap</span>: <span class="val">16px</span>; }
+<span class="sel">.card-row .card</span> { <span class="prop">flex</span>: <span class="val">1</span>; }
+
+<span class="cmt">/* Push last item to the right */</span>
+<span class="sel">.nav-item:last-child</span> { <span class="prop">margin-left</span>: <span class="val">auto</span>; }
+
+<span class="cmt">/* Cards that wrap on small screens */</span>
+<span class="sel">.cards</span> { <span class="prop">display</span>: <span class="val">flex</span>; <span class="prop">flex-wrap</span>: <span class="val">wrap</span>; <span class="prop">gap</span>: <span class="val">16px</span>; }
+<span class="sel">.cards .card</span> { <span class="prop">flex</span>: <span class="val">1 1 250px</span>; } <span class="cmt">/* min 250px, wraps automatically */</span>
+
+<span class="cmt">/* Full-height sidebar layout */</span>
+<span class="sel">.app</span>     { <span class="prop">display</span>: <span class="val">flex</span>; <span class="prop">min-height</span>: <span class="val">100vh</span>; }
+<span class="sel">.sidebar</span> { <span class="prop">width</span>: <span class="val">260px</span>; <span class="prop">flex-shrink</span>: <span class="val">0</span>; }
+<span class="sel">.main</span>    { <span class="prop">flex</span>: <span class="val">1</span>; }</pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">🧠</div>
+      <div class="callout-body"><strong>The mental model for Flexbox</strong><p>Before writing any Flexbox CSS, ask yourself: "Do I want items side by side or stacked?" If side by side → <code>flex-direction: row</code> (default). If stacked → <code>flex-direction: column</code>. Then: <code>justify-content</code> controls the main direction, <code>align-items</code> controls the cross direction.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch10',document.querySelector('[data-page=ch10]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Positioning</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch12',document.querySelector('[data-page=ch12]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">CSS Grid</span></a>
+  </div>
+</div>
+
+<!-- CH12: CSS GRID -->
+<div class="page" id="page-ch12">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 12</div>
+      <h2>CSS Grid</h2>
+      <p class="chapter-intro">Grid is a two-dimensional layout system. While Flexbox arranges items in one direction (row OR column), Grid controls rows AND columns simultaneously. Use it for page-level layouts and any design that needs both axes at once.</p>
+    </div>
+
+    <h3>Flexbox vs Grid — when to use which</h3>
+    <table class="compare-table">
+      <thead><tr><th>Situation</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>Navbar, button group, icon row — one line</td><td><span class="tag blue">Flexbox</span></td></tr>
+        <tr><td>Card grid, photo gallery, product listing</td><td><span class="tag purple">Grid</span></td></tr>
+        <tr><td>Full page layout (header, sidebar, main, footer)</td><td><span class="tag purple">Grid</span></td></tr>
+        <tr><td>Centering one item</td><td><span class="tag blue">Flexbox</span></td></tr>
+        <tr><td>Items that span multiple rows or columns</td><td><span class="tag purple">Grid</span></td></tr>
+        <tr><td>Items inside a grid cell that need aligning</td><td><span class="tag blue">Flexbox inside Grid</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Creating a grid</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">.grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+
+  <span class="cmt">/* Define columns */</span>
+  <span class="prop">grid-template-columns</span>: <span class="val">200px 200px 200px</span>;     <span class="cmt">/* 3 fixed columns */</span>
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr 1fr 1fr</span>;           <span class="cmt">/* 3 equal-fraction columns */</span>
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;        <span class="cmt">/* same — shorthand */</span>
+  <span class="prop">grid-template-columns</span>: <span class="val">250px 1fr</span>;             <span class="cmt">/* fixed sidebar + fluid content */</span>
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr 2fr 1fr</span>;           <span class="cmt">/* middle is double width */</span>
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fill, minmax(200px, 1fr))</span>; <span class="cmt">/* responsive! */</span>
+
+  <span class="cmt">/* Define rows (optional — rows auto-size by default) */</span>
+  <span class="prop">grid-template-rows</span>: <span class="val">80px 1fr 60px</span>; <span class="cmt">/* header, content, footer */</span>
+
+  <span class="cmt">/* Gaps */</span>
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+  <span class="prop">column-gap</span>: <span class="val">20px</span>;
+  <span class="prop">row-gap</span>: <span class="val">12px</span>;
+}</pre>
+    </div>
+
+    <h3>The fr unit — fractions of available space</h3>
+    <p><code>fr</code> means "fraction of remaining space". It's like Flexbox's <code>flex: 1</code> but for grid columns. <code>1fr 2fr 1fr</code> = the middle column gets twice the space of the others.</p>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">grid-template-columns examples — visualized</div>
+      <svg width="100%" viewBox="0 0 660 300" role="img">
+        <!-- repeat(3, 1fr) -->
+        <text x="30" y="22" font-family="'Fira Code',monospace" font-size="12" fill="#7c3aed">repeat(3, 1fr)</text>
+        <rect x="30" y="30" width="192" height="46" rx="5" fill="#dbeafe" stroke="#93c5fd"/><text x="126" y="59" font-family="sans-serif" font-size="11" fill="#1d4ed8" text-anchor="middle">1fr</text>
+        <rect x="228" y="30" width="192" height="46" rx="5" fill="#bfdbfe" stroke="#93c5fd"/><text x="324" y="59" font-family="sans-serif" font-size="11" fill="#1d4ed8" text-anchor="middle">1fr</text>
+        <rect x="426" y="30" width="192" height="46" rx="5" fill="#93c5fd" stroke="#60a5fa"/><text x="522" y="59" font-family="sans-serif" font-size="11" fill="#1e3a8a" text-anchor="middle">1fr</text>
+        <text x="330" y="94" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Three perfectly equal columns — always</text>
+
+        <!-- 250px 1fr -->
+        <text x="30" y="120" font-family="'Fira Code',monospace" font-size="12" fill="#7c3aed">250px 1fr</text>
+        <rect x="30" y="128" width="196" height="46" rx="5" fill="#d1fae5" stroke="#6ee7b7"/><text x="128" y="157" font-family="sans-serif" font-size="11" fill="#065f46" text-anchor="middle">250px (sidebar)</text>
+        <rect x="232" y="128" width="386" height="46" rx="5" fill="#a7f3d0" stroke="#34d399"/><text x="425" y="157" font-family="sans-serif" font-size="11" fill="#047857" text-anchor="middle">1fr — takes all remaining space</text>
+        <text x="330" y="192" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Fixed sidebar, fluid content — classic dashboard layout</text>
+
+        <!-- 1fr 2fr 1fr -->
+        <text x="30" y="218" font-family="'Fira Code',monospace" font-size="12" fill="#7c3aed">1fr 2fr 1fr</text>
+        <rect x="30" y="226" width="126" height="46" rx="5" fill="#fde68a" stroke="#fcd34d"/><text x="93" y="255" font-family="sans-serif" font-size="11" fill="#78350f" text-anchor="middle">1fr</text>
+        <rect x="162" y="226" width="252" height="46" rx="5" fill="#fbbf24" stroke="#f59e0b"/><text x="288" y="255" font-family="sans-serif" font-size="11" fill="#78350f" text-anchor="middle">2fr — double width</text>
+        <rect x="420" y="226" width="210" height="46" rx="5" fill="#fde68a" stroke="#fcd34d"/><text x="525" y="255" font-family="sans-serif" font-size="11" fill="#78350f" text-anchor="middle">1fr</text>
+        <text x="330" y="290" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Middle column gets 50% of space; sides share the rest equally</text>
+      </svg>
+    </div>
+
+    <h3>Placing items in the grid</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Grid item placement</span></div>
+<pre><span class="cmt">/* Span multiple columns or rows */</span>
+<span class="sel">.featured</span> {
+  <span class="prop">grid-column</span>: <span class="val">span 2</span>;   <span class="cmt">/* takes 2 columns */</span>
+  <span class="prop">grid-row</span>: <span class="val">span 2</span>;      <span class="cmt">/* takes 2 rows */</span>
+}
+
+<span class="cmt">/* Exact placement using grid line numbers */</span>
+<span class="sel">.header</span>  { <span class="prop">grid-column</span>: <span class="val">1 / -1</span>; }  <span class="cmt">/* first to last column (full width) */</span>
+<span class="sel">.sidebar</span> { <span class="prop">grid-column</span>: <span class="val">1 / 2</span>; <span class="prop">grid-row</span>: <span class="val">2 / 4</span>; }
+<span class="sel">.main</span>    { <span class="prop">grid-column</span>: <span class="val">2 / -1</span>; <span class="prop">grid-row</span>: <span class="val">2</span>; }</pre>
+    </div>
+
+    <h3>Named template areas — the most readable approach</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">.layout</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">240px 1fr</span>;
+  <span class="prop">grid-template-rows</span>: <span class="val">60px 1fr 50px</span>;
+  <span class="prop">grid-template-areas</span>:
+    <span class="str">"header  header"</span>
+    <span class="str">"sidebar main"</span>
+    <span class="str">"footer  footer"</span>;
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+  <span class="prop">min-height</span>: <span class="val">100vh</span>;
+}
+<span class="sel">.header</span>  { <span class="prop">grid-area</span>: <span class="val">header</span>; }
+<span class="sel">.sidebar</span> { <span class="prop">grid-area</span>: <span class="val">sidebar</span>; }
+<span class="sel">.main</span>    { <span class="prop">grid-area</span>: <span class="val">main</span>; }
+<span class="sel">.footer</span>  { <span class="prop">grid-area</span>: <span class="val">footer</span>; }</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Named template areas — the resulting layout</div>
+      <svg width="100%" viewBox="0 0 660 240" role="img">
+        <rect x="30" y="16" width="600" height="48" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+        <text x="330" y="46" font-family="sans-serif" font-size="14" font-weight="600" fill="#1e40af" text-anchor="middle">header (spans full width — both columns)</text>
+        <rect x="30" y="72" width="148" height="120" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+        <text x="104" y="138" font-family="sans-serif" font-size="13" font-weight="600" fill="#065f46" text-anchor="middle">sidebar</text>
+        <rect x="186" y="72" width="444" height="120" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+        <text x="408" y="138" font-family="sans-serif" font-size="13" font-weight="600" fill="#5b21b6" text-anchor="middle">main content area</text>
+        <rect x="30" y="200" width="600" height="32" rx="6" fill="#fef9c3" stroke="#fde047" stroke-width="1.5"/>
+        <text x="330" y="222" font-family="sans-serif" font-size="13" font-weight="600" fill="#854d0e" text-anchor="middle">footer (spans full width)</text>
+      </svg>
+    </div>
+
+    <h3>auto-fill vs auto-fit — responsive without media queries</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — The most powerful responsive pattern</span></div>
+<pre><span class="sel">.card-grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fill, minmax(250px, 1fr))</span>;
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+}
+<span class="cmt">/*
+  auto-fill: pack as many 250px columns as fit
+  minmax(250px, 1fr): each column is min 250px, max 1fr
+  Result: 4 columns on desktop, 2 on tablet, 1 on mobile
+  — all with ZERO media queries
+*/</span></pre>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch11',document.querySelector('[data-page=ch11]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Flexbox</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch13',document.querySelector('[data-page=ch13]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Responsive Design</span></a>
+  </div>
+</div>
+
+<!-- CH13: RESPONSIVE -->
+<div class="page" id="page-ch13">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 13</div>
+      <h2>Responsive Design</h2>
+      <p class="chapter-intro">Responsive design means your website works well on any screen — phone, tablet, laptop, desktop. The core tools are media queries, fluid units, and the viewport meta tag.</p>
+    </div>
+
+    <h3>The viewport meta tag — mandatory</h3>
+    <p>Without this, mobile browsers zoom out to show the full desktop page, ignoring your CSS breakpoints entirely:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">HTML — must be in &lt;head&gt;</span></div>
+<pre>&lt;<span class="sel">meta</span> <span class="prop">name</span>="<span class="str">viewport</span>" <span class="prop">content</span>="<span class="str">width=device-width, initial-scale=1.0</span>"&gt;</pre>
+    </div>
+
+    <h3>Media queries</h3>
+    <p>Media queries let you apply different CSS based on screen conditions. Think of them as <code>if</code> statements for CSS.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Mobile-first approach</span></div>
+<pre><span class="cmt">/* BASE STYLES — mobile first. Write these first. */</span>
+<span class="sel">.container</span> {
+  <span class="prop">padding</span>: <span class="val">16px</span>;
+  <span class="prop">width</span>: <span class="val">100%</span>;
+}
+<span class="sel">.grid</span> { <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>; } <span class="cmt">/* single column on mobile */</span>
+
+<span class="cmt">/* TABLET — add styles for screens >= 768px */</span>
+<span class="at-rule">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel">.container</span> { <span class="prop">padding</span>: <span class="val">24px 32px</span>; <span class="prop">max-width</span>: <span class="val">720px</span>; <span class="prop">margin</span>: <span class="val">0 auto</span>; }
+  <span class="sel">.grid</span> { <span class="prop">grid-template-columns</span>: <span class="val">repeat(2, 1fr)</span>; }
+}
+
+<span class="cmt">/* DESKTOP — add styles for screens >= 1024px */</span>
+<span class="at-rule">@media</span> (<span class="prop">min-width</span>: <span class="val">1024px</span>) {
+  <span class="sel">.container</span> { <span class="prop">max-width</span>: <span class="val">1000px</span>; }
+  <span class="sel">.grid</span> { <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>; }
+}
+
+<span class="cmt">/* LARGE DESKTOP */</span>
+<span class="at-rule">@media</span> (<span class="prop">min-width</span>: <span class="val">1280px</span>) {
+  <span class="sel">.container</span> { <span class="prop">max-width</span>: <span class="val">1200px</span>; }
+}</pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Common breakpoints</div>
+      <svg width="100%" viewBox="0 0 660 130" role="img">
+        <line x1="30" y1="60" x2="630" y2="60" stroke="#e4e7ef" stroke-width="2"/>
+        <circle cx="80" cy="60" r="9" fill="#3b82f6"/>
+        <text x="80" y="38" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">📱</text>
+        <text x="80" y="86" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Mobile</text>
+        <text x="80" y="100" font-family="'Fira Code',monospace" font-size="10" fill="#6b7280" text-anchor="middle">&lt; 640px</text>
+
+        <circle cx="220" cy="60" r="9" fill="#8b5cf6"/>
+        <text x="220" y="86" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Tablet</text>
+        <text x="220" y="100" font-family="'Fira Code',monospace" font-size="10" fill="#6b7280" text-anchor="middle">768px</text>
+
+        <circle cx="380" cy="60" r="9" fill="#10b981"/>
+        <text x="380" y="86" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Laptop</text>
+        <text x="380" y="100" font-family="'Fira Code',monospace" font-size="10" fill="#6b7280" text-anchor="middle">1024px</text>
+
+        <circle cx="510" cy="60" r="9" fill="#f59e0b"/>
+        <text x="510" y="86" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Desktop</text>
+        <text x="510" y="100" font-family="'Fira Code',monospace" font-size="10" fill="#6b7280" text-anchor="middle">1280px</text>
+
+        <circle cx="610" cy="60" r="9" fill="#ef4444"/>
+        <text x="610" y="86" font-family="sans-serif" font-size="11" fill="#374151" text-anchor="middle" font-weight="600">Wide</text>
+        <text x="610" y="100" font-family="'Fira Code',monospace" font-size="10" fill="#6b7280" text-anchor="middle">1536px</text>
+      </svg>
+    </div>
+
+    <h3>Responsive without media queries</h3>
+    <p>Modern CSS lets you build responsive layouts <em>without</em> writing a single media query, using smart units and Grid features:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Zero media queries</span></div>
+<pre><span class="cmt">/* Auto-fills columns, minimum 200px each, wraps automatically */</span>
+<span class="sel">.card-grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fill, minmax(200px, 1fr))</span>;
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+}
+
+<span class="cmt">/* Fluid font size — min 1.5rem, scales with viewport, max 3rem */</span>
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">clamp(1.5rem, 4vw, 3rem)</span>; }
+
+<span class="cmt">/* Container that's never wider than 1200px but always has 24px margin */</span>
+<span class="sel">.container</span> {
+  <span class="prop">width</span>: <span class="val">min(1200px, 100% - 48px)</span>;
+  <span class="prop">margin</span>: <span class="val">0 auto</span>;
+}</pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>Mobile-first is the right approach</strong><p>Write your base CSS for mobile, then use <code>@media (min-width: ...)</code> to progressively add styles for larger screens. Mobile CSS is usually simpler — start simple and add complexity. The reverse (desktop-first with max-width) leads to a mess of override rules.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch12',document.querySelector('[data-page=ch12]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">CSS Grid</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch14',document.querySelector('[data-page=ch14]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Transitions &amp; Animations</span></a>
+  </div>
+</div>
+
+<!-- CH14: TRANSITIONS & ANIMATIONS -->
+<div class="page" id="page-ch14">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 14</div>
+      <h2>Transitions &amp; Animations</h2>
+      <p class="chapter-intro">CSS transitions make state changes smooth. Animations run automatically on a loop. Both make interfaces feel alive and polished — but overusing them makes everything feel cheap and distracting.</p>
+    </div>
+
+    <h3>Transitions</h3>
+    <p>A transition smoothly animates a CSS property change when something triggers it (like hovering).</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* transition: property duration timing-function delay */</span>
+<span class="sel">.button</span> {
+  <span class="prop">background</span>: <span class="val">#3b82f6</span>;
+  <span class="prop">transition</span>: <span class="val">background 0.2s ease</span>;
+}
+<span class="sel">.button:hover</span> {
+  <span class="prop">background</span>: <span class="val">#2563eb</span>; <span class="cmt">/* transition applies automatically on hover */</span>
+}
+
+<span class="cmt">/* Multiple properties */</span>
+<span class="sel">.card</span> {
+  <span class="prop">transition</span>: <span class="val">transform 0.2s ease, box-shadow 0.2s ease</span>;
+}
+<span class="sel">.card:hover</span> {
+  <span class="prop">transform</span>: <span class="val">translateY(-4px)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 12px 40px rgba(0,0,0,0.15)</span>;
+}
+
+<span class="cmt">/* Transition all (use carefully — expensive) */</span>
+<span class="sel">.item</span> { <span class="prop">transition</span>: <span class="val">all 0.3s ease</span>; }</pre>
+    </div>
+
+    <h3>Timing functions</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="prop">transition-timing-function</span>: <span class="val">ease</span>;         <span class="cmt">/* slow → fast → slow (default) */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">ease-in</span>;      <span class="cmt">/* starts slow */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">ease-out</span>;     <span class="cmt">/* ends slow ✅ most natural for UI */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">ease-in-out</span>;  <span class="cmt">/* slow at both ends */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">linear</span>;       <span class="cmt">/* constant speed */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">cubic-bezier(0.34, 1.56, 0.64, 1)</span>; <span class="cmt">/* springy */</span></pre>
+    </div>
+
+    <h3>Keyframe animations</h3>
+    <p>Animations run without user interaction. Define a sequence of states with <code>@keyframes</code>, then apply to elements.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* Define the animation */</span>
+<span class="at-rule">@keyframes</span> fadeIn {
+  <span class="sel">from</span> { <span class="prop">opacity</span>: <span class="val">0</span>; <span class="prop">transform</span>: <span class="val">translateY(12px)</span>; }
+  <span class="sel">to</span>   { <span class="prop">opacity</span>: <span class="val">1</span>; <span class="prop">transform</span>: <span class="val">translateY(0)</span>; }
+}
+
+<span class="at-rule">@keyframes</span> pulse {
+  <span class="sel">0%, 100%</span> { <span class="prop">transform</span>: <span class="val">scale(1)</span>; }
+  <span class="sel">50%</span>       { <span class="prop">transform</span>: <span class="val">scale(1.05)</span>; }
+}
+
+<span class="at-rule">@keyframes</span> spin {
+  <span class="sel">from</span> { <span class="prop">transform</span>: <span class="val">rotate(0deg)</span>; }
+  <span class="sel">to</span>   { <span class="prop">transform</span>: <span class="val">rotate(360deg)</span>; }
+}
+
+<span class="cmt">/* Apply — name duration timing delay iterations direction */</span>
+<span class="sel">.modal</span>   { <span class="prop">animation</span>: <span class="val">fadeIn 0.3s ease-out</span>; }
+<span class="sel">.loader</span>  { <span class="prop">animation</span>: <span class="val">spin 1s linear infinite</span>; }
+<span class="sel">.cta-btn</span> { <span class="prop">animation</span>: <span class="val">pulse 2s ease-in-out infinite</span>; }
+
+<span class="cmt">/* Respect user's reduced-motion setting — accessibility */</span>
+<span class="at-rule">@media</span> (<span class="prop">prefers-reduced-motion</span>: <span class="val">reduce</span>) {
+  <span class="sel">*</span> { <span class="prop">animation</span>: <span class="val">none</span> <span class="kw">!important</span>; <span class="prop">transition</span>: <span class="val">none</span> <span class="kw">!important</span>; }
+}</pre>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>Only animate transform and opacity</strong><p>Animating <code>transform</code> and <code>opacity</code> is GPU-accelerated — silky smooth. Animating <code>width</code>, <code>height</code>, <code>margin</code>, <code>top</code>, or <code>left</code> forces the browser to recalculate layout on every frame — janky and slow. Always use <code>transform: translateX()</code> instead of changing <code>left</code>.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch13',document.querySelector('[data-page=ch13]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Responsive Design</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch15',document.querySelector('[data-page=ch15]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">CSS Variables</span></a>
+  </div>
+</div>
+
+<!-- CH15: CSS VARIABLES -->
+<div class="page" id="page-ch15">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 15</div>
+      <h2>CSS Variables (Custom Properties)</h2>
+      <p class="chapter-intro">CSS variables let you define values once and reuse them everywhere. Change one variable and the entire design updates instantly. They're the foundation of every professional design system.</p>
+    </div>
+
+    <h3>Defining and using variables</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* Define on :root to make them globally available */</span>
+<span class="sel">:root</span> {
+  <span class="cmt">/* Colors */</span>
+  <span class="prop">--color-primary</span>:      <span class="val">#3b82f6</span>;
+  <span class="prop">--color-primary-dark</span>: <span class="val">#2563eb</span>;
+  <span class="prop">--color-text</span>:         <span class="val">#1a1d2e</span>;
+  <span class="prop">--color-text-muted</span>:   <span class="val">#6b7280</span>;
+  <span class="prop">--color-bg</span>:           <span class="val">#ffffff</span>;
+  <span class="prop">--color-surface</span>:      <span class="val">#f8f9fc</span>;
+  <span class="prop">--color-border</span>:       <span class="val">#e4e7ef</span>;
+
+  <span class="cmt">/* Typography */</span>
+  <span class="prop">--font-sans</span>:       <span class="val">'Inter', sans-serif</span>;
+  <span class="prop">--font-size-sm</span>:    <span class="val">0.875rem</span>; <span class="cmt">/* 14px */</span>
+  <span class="prop">--font-size-base</span>:  <span class="val">1rem</span>;     <span class="cmt">/* 16px */</span>
+  <span class="prop">--font-size-lg</span>:    <span class="val">1.125rem</span>; <span class="cmt">/* 18px */</span>
+
+  <span class="cmt">/* Spacing */</span>
+  <span class="prop">--space-xs</span>: <span class="val">4px</span>;
+  <span class="prop">--space-sm</span>: <span class="val">8px</span>;
+  <span class="prop">--space-md</span>: <span class="val">16px</span>;
+  <span class="prop">--space-lg</span>: <span class="val">32px</span>;
+  <span class="prop">--space-xl</span>: <span class="val">64px</span>;
+
+  <span class="cmt">/* Design tokens */</span>
+  <span class="prop">--radius</span>:    <span class="val">8px</span>;
+  <span class="prop">--shadow-sm</span>: <span class="val">0 1px 3px rgba(0,0,0,0.12)</span>;
+  <span class="prop">--shadow-md</span>: <span class="val">0 4px 12px rgba(0,0,0,0.1)</span>;
+}
+
+<span class="cmt">/* Use with var() */</span>
+<span class="sel">.button</span> {
+  <span class="prop">background</span>:    <span class="val">var(--color-primary)</span>;
+  <span class="prop">color</span>:         <span class="val">white</span>;
+  <span class="prop">padding</span>:       <span class="val">var(--space-sm) var(--space-md)</span>;
+  <span class="prop">border-radius</span>: <span class="val">var(--radius)</span>;
+  <span class="prop">font-size</span>:     <span class="val">var(--font-size-base)</span>;
+  <span class="prop">box-shadow</span>:    <span class="val">var(--shadow-sm)</span>;
+}
+<span class="sel">.button:hover</span> { <span class="prop">background</span>: <span class="val">var(--color-primary-dark)</span>; }</pre>
+    </div>
+
+    <h3>Dark mode with CSS variables</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="sel">:root</span> {
+  <span class="prop">--color-bg</span>:      <span class="val">#ffffff</span>;
+  <span class="prop">--color-text</span>:    <span class="val">#1a1d2e</span>;
+  <span class="prop">--color-surface</span>: <span class="val">#f8f9fc</span>;
+  <span class="prop">--color-border</span>:  <span class="val">#e4e7ef</span>;
+}
+
+<span class="at-rule">@media</span> (<span class="prop">prefers-color-scheme</span>: <span class="val">dark</span>) {
+  <span class="sel">:root</span> {
+    <span class="prop">--color-bg</span>:      <span class="val">#0f1117</span>;
+    <span class="prop">--color-text</span>:    <span class="val">#e2e8f0</span>;
+    <span class="prop">--color-surface</span>: <span class="val">#1a1f2e</span>;
+    <span class="prop">--color-border</span>:  <span class="val">#2a3040</span>;
+  }
+}
+
+<span class="cmt">/* Everything using these variables switches themes automatically */</span>
+<span class="sel">body</span> { <span class="prop">background</span>: <span class="val">var(--color-bg)</span>; <span class="prop">color</span>: <span class="val">var(--color-text)</span>; }</pre>
+    </div>
+
+    <h3>Fallback values</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* var(--variable, fallback) — uses fallback if variable is undefined */</span>
+<span class="sel">.card</span> {
+  <span class="prop">background</span>: <span class="val">var(--card-bg, white)</span>;
+  <span class="prop">color</span>: <span class="val">var(--card-text, var(--color-text, #1a1d2e))</span>; <span class="cmt">/* chained fallback */</span>
+}</pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">🎨</div>
+      <div class="callout-body"><strong>Design systems start with variables</strong><p>Define your entire color palette, type scale, and spacing scale as <code>:root</code> variables. Then use <em>only</em> variables in your component CSS — never hardcode colors or font sizes directly. When a brand color changes, you update one line. That's it.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch14',document.querySelector('[data-page=ch14]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Transitions &amp; Animations</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch16',document.querySelector('[data-page=ch16]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Pseudo-classes &amp; Elements</span></a>
+  </div>
+</div>
+
+<!-- CH16: PSEUDO-CLASSES & ELEMENTS -->
+<div class="page" id="page-ch16">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 16</div>
+      <h2>Pseudo-classes &amp; Pseudo-elements</h2>
+      <p class="chapter-intro">Pseudo-classes target elements in specific states (hovered, focused, first child). Pseudo-elements target specific parts of elements (content before/after, first line). Both let you style things without adding extra HTML.</p>
+    </div>
+
+    <h3>Pseudo-classes (single colon)</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* ── User interaction ── */</span>
+<span class="sel">a:hover</span>        { <span class="prop">color</span>: <span class="val">blue</span>; }              <span class="cmt">/* mouse is over it */</span>
+<span class="sel">a:visited</span>      { <span class="prop">color</span>: <span class="val">purple</span>; }            <span class="cmt">/* link was already clicked */</span>
+<span class="sel">a:active</span>       { <span class="prop">opacity</span>: <span class="val">0.7</span>; }             <span class="cmt">/* being clicked right now */</span>
+<span class="sel">input:focus</span>    { <span class="prop">outline</span>: <span class="val">2px solid #3b82f6</span>; } <span class="cmt">/* keyboard focused */</span>
+<span class="sel">input:disabled</span> { <span class="prop">opacity</span>: <span class="val">0.5</span>; <span class="prop">cursor</span>: <span class="val">not-allowed</span>; }
+<span class="sel">input:checked</span>  { <span class="prop">accent-color</span>: <span class="val">#3b82f6</span>; }   <span class="cmt">/* checkbox/radio is checked */</span>
+<span class="sel">input:invalid</span>  { <span class="prop">border-color</span>: <span class="val">#ef4444</span>; }   <span class="cmt">/* fails HTML validation */</span>
+
+<span class="cmt">/* ── Structural — position among siblings ── */</span>
+<span class="sel">li:first-child</span>     { <span class="prop">border-top</span>: <span class="val">none</span>; }
+<span class="sel">li:last-child</span>      { <span class="prop">border-bottom</span>: <span class="val">none</span>; }
+<span class="sel">li:nth-child(2)</span>    { <span class="prop">background</span>: <span class="val">#f0f4ff</span>; }   <span class="cmt">/* exactly 2nd item */</span>
+<span class="sel">li:nth-child(odd)</span>  { <span class="prop">background</span>: <span class="val">#f9f9f9</span>; }   <span class="cmt">/* zebra striping */</span>
+<span class="sel">li:nth-child(even)</span> { <span class="prop">background</span>: <span class="val">white</span>; }
+<span class="sel">li:nth-child(3n)</span>   { <span class="prop">color</span>: <span class="val">blue</span>; }            <span class="cmt">/* every 3rd item */</span>
+<span class="sel">p:only-child</span>       { <span class="prop">font-size</span>: <span class="val">1.2rem</span>; }     <span class="cmt">/* only child of parent */</span>
+
+<span class="cmt">/* ── :not() — exclude selector ── */</span>
+<span class="sel">p:not(.intro)</span>      { <span class="prop">color</span>: <span class="val">gray</span>; }           <span class="cmt">/* any p without class intro */</span>
+<span class="sel">button:not(:disabled)</span> { <span class="prop">cursor</span>: <span class="val">pointer</span>; }
+
+<span class="cmt">/* ── :is() and :where() — group selectors cleanly ── */</span>
+<span class="sel">:is(h1, h2, h3)</span>    { <span class="prop">font-weight</span>: <span class="val">700</span>; }      <span class="cmt">/* same as h1,h2,h3 but cleaner */</span>
+<span class="sel">:where(header, footer) a</span> { <span class="prop">color</span>: <span class="val">white</span>; }   <span class="cmt">/* zero specificity — easy to override */</span></pre>
+    </div>
+
+    <h3>Pseudo-elements (double colon)</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* ::before and ::after — inject content before/after element */</span>
+<span class="sel">.required::after</span> {
+  <span class="prop">content</span>: <span class="val">' *'</span>;
+  <span class="prop">color</span>: <span class="val">red</span>;
+}
+
+<span class="cmt">/* Decorative line — no extra HTML needed */</span>
+<span class="sel">.section-title::after</span> {
+  <span class="prop">content</span>: <span class="val">''</span>;            <span class="cmt">/* empty string required even for decorative use */</span>
+  <span class="prop">display</span>: <span class="val">block</span>;
+  <span class="prop">width</span>: <span class="val">48px</span>;
+  <span class="prop">height</span>: <span class="val">3px</span>;
+  <span class="prop">background</span>: <span class="val">var(--color-primary)</span>;
+  <span class="prop">margin-top</span>: <span class="val">8px</span>;
+}
+
+<span class="cmt">/* Gradient top border on a card */</span>
+<span class="sel">.card::before</span> {
+  <span class="prop">content</span>: <span class="val">''</span>;
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>: <span class="val">0</span>; <span class="prop">left</span>: <span class="val">0</span>; <span class="prop">right</span>: <span class="val">0</span>;
+  <span class="prop">height</span>: <span class="val">3px</span>;
+  <span class="prop">background</span>: <span class="val">linear-gradient(to right, #3b82f6, #8b5cf6)</span>;
+  <span class="prop">border-radius</span>: <span class="val">8px 8px 0 0</span>;
+}
+
+<span class="cmt">/* Text selection color */</span>
+<span class="sel">::selection</span> {
+  <span class="prop">background</span>: <span class="val">#bfdbfe</span>;
+  <span class="prop">color</span>: <span class="val">#1e40af</span>;
+}
+
+<span class="cmt">/* Placeholder text styling */</span>
+<span class="sel">input::placeholder</span> { <span class="prop">color</span>: <span class="val">#94a3b8</span>; <span class="prop">font-style</span>: <span class="val">italic</span>; }
+
+<span class="cmt">/* First line / first letter */</span>
+<span class="sel">p::first-line</span>   { <span class="prop">font-weight</span>: <span class="val">600</span>; }
+<span class="sel">p::first-letter</span> { <span class="prop">font-size</span>: <span class="val">3em</span>; <span class="prop">float</span>: <span class="val">left</span>; <span class="prop">line-height</span>: <span class="val">1</span>; } <span class="cmt">/* drop cap */</span></pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">::before and ::after — where they sit relative to the element</div>
+      <svg width="100%" viewBox="0 0 660 160" role="img">
+        <rect x="30" y="40" width="600" height="80" rx="10" fill="#f8f9fc" stroke="#e4e7ef" stroke-width="1.5"/>
+        <rect x="30" y="40" width="140" height="80" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+        <text x="100" y="86" font-family="sans-serif" font-size="13" font-weight="700" fill="#1e40af" text-anchor="middle">::before</text>
+        <rect x="248" y="50" width="164" height="60" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+        <text x="330" y="86" font-family="sans-serif" font-size="13" font-weight="700" fill="#166534" text-anchor="middle">element content</text>
+        <rect x="490" y="40" width="140" height="80" rx="10" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1.5"/>
+        <text x="560" y="86" font-family="sans-serif" font-size="13" font-weight="700" fill="#9d174d" text-anchor="middle">::after</text>
+        <text x="330" y="150" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Both are children of the element. Both require content: '' to render. Neither adds HTML.</text>
+      </svg>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">🔑</div>
+      <div class="callout-body"><strong>::before and ::after need content: ''</strong><p>Even for decorative shapes with no text, you must write <code>content: ''</code>. Without it the pseudo-element won't render at all. Add <code>display: block</code> and then position/size it however you need.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch15',document.querySelector('[data-page=ch15]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">CSS Variables</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch17',document.querySelector('[data-page=ch17]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Z-index &amp; Stacking</span></a>
+  </div>
+</div>
+
+<!-- CH17: Z-INDEX & STACKING -->
+<div class="page" id="page-ch17">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 17</div>
+      <h2>Z-index &amp; Stacking Context</h2>
+      <p class="chapter-intro">Z-index controls which element appears on top when they overlap. It sounds simple, but "stacking context" rules trip up almost every developer. Once you understand why z-index sometimes seems to do nothing, it all clicks.</p>
+    </div>
+
+    <h3>Z-index basics</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS</span></div>
+<pre><span class="cmt">/* Higher z-index = appears on top */</span>
+<span class="sel">.modal</span>    { <span class="prop">z-index</span>: <span class="val">1000</span>; }
+<span class="sel">.tooltip</span>  { <span class="prop">z-index</span>: <span class="val">500</span>; }
+<span class="sel">.dropdown</span> { <span class="prop">z-index</span>: <span class="val">200</span>; }
+<span class="sel">.navbar</span>   { <span class="prop">z-index</span>: <span class="val">100</span>; }
+<span class="sel">.card</span>     { <span class="prop">z-index</span>: <span class="val">1</span>; }
+
+<span class="cmt">/* z-index ONLY works on positioned elements */</span>
+<span class="sel">.item</span> {
+  <span class="prop">position</span>: <span class="val">relative</span>; <span class="cmt">/* required — static ignores z-index */</span>
+  <span class="prop">z-index</span>: <span class="val">10</span>;
+}</pre>
+    </div>
+
+    <div class="callout gotcha">
+      <div class="callout-icon">🚫</div>
+      <div class="callout-body"><strong>z-index only works on positioned elements</strong><p>If <code>position</code> is <code>static</code> (the default), <code>z-index</code> is completely ignored. You must set <code>position</code> to <code>relative</code>, <code>absolute</code>, <code>fixed</code>, or <code>sticky</code> first.</p></div>
+    </div>
+
+    <h3>Stacking context — why z-index "breaks"</h3>
+    <p>A stacking context is an isolated layer. Elements inside a stacking context <strong>only compete with each other</strong> — not with elements outside. The parent's z-index is what competes at the outer level.</p>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">Stacking context — child z-index can't escape its parent</div>
+      <svg width="100%" viewBox="0 0 660 280" role="img">
+        <!-- Parent A z-index:1 -->
+        <rect x="20" y="30" width="260" height="190" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+        <text x="150" y="56" font-family="sans-serif" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">Parent A  (z-index: 1)</text>
+        <text x="150" y="72" font-family="sans-serif" font-size="10" fill="#3b82f6" text-anchor="middle">creates stacking context</text>
+        <rect x="50" y="86" width="200" height="100" rx="8" fill="#3b82f6"/>
+        <text x="150" y="131" font-family="sans-serif" font-size="13" fill="white" text-anchor="middle" font-weight="700">Child  z-index: 9999</text>
+        <text x="150" y="150" font-family="sans-serif" font-size="10" fill="#bfdbfe" text-anchor="middle">trapped inside Parent A</text>
+
+        <!-- Parent B z-index:2 -->
+        <rect x="380" y="30" width="260" height="190" rx="10" fill="#fdf4ff" stroke="#a855f7" stroke-width="2"/>
+        <text x="510" y="56" font-family="sans-serif" font-size="12" font-weight="700" fill="#7e22ce" text-anchor="middle">Parent B  (z-index: 2)</text>
+        <text x="510" y="72" font-family="sans-serif" font-size="10" fill="#a855f7" text-anchor="middle">creates stacking context</text>
+        <rect x="410" y="86" width="200" height="100" rx="8" fill="#a855f7"/>
+        <text x="510" y="131" font-family="sans-serif" font-size="13" fill="white" text-anchor="middle" font-weight="700">Child  z-index: 1</text>
+        <text x="510" y="150" font-family="sans-serif" font-size="10" fill="#e9d5ff" text-anchor="middle">inside Parent B</text>
+
+        <!-- Explanation -->
+        <rect x="180" y="240" width="300" height="32" rx="6" fill="#fef9c3" stroke="#fde047"/>
+        <text x="330" y="261" font-family="sans-serif" font-size="11" fill="#854d0e" text-anchor="middle">Parent B (z:2) beats Parent A (z:1) →</text>
+        <text x="330" y="274" font-family="sans-serif" font-size="10" fill="#92400e" text-anchor="middle">B's child always wins, regardless of child z-index</text>
+      </svg>
+    </div>
+
+    <h3>What creates a new stacking context?</h3>
+    <ul>
+      <li>Any positioned element (<code>relative</code>/<code>absolute</code>/<code>fixed</code>/<code>sticky</code>) with a <code>z-index</code> other than <code>auto</code></li>
+      <li><code>opacity</code> less than 1</li>
+      <li><code>transform</code> with any value other than <code>none</code></li>
+      <li><code>filter</code> with any value other than <code>none</code></li>
+      <li><code>will-change</code></li>
+      <li><code>isolation: isolate</code> — explicitly creates a context</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>Use isolation: isolate to contain z-index</strong><p>If a component (like a card with a tooltip) has z-index conflicts with the rest of the page, add <code>isolation: isolate</code> to its wrapper. This creates a new stacking context without any visual effect, keeping the component's z-index values self-contained.</p></div>
+    </div>
+
+    <h3>A practical z-index scale</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — Use variables for consistency</span></div>
+<pre><span class="sel">:root</span> {
+  <span class="prop">--z-below</span>:   <span class="val">-1</span>;
+  <span class="prop">--z-base</span>:    <span class="val">0</span>;
+  <span class="prop">--z-above</span>:   <span class="val">10</span>;
+  <span class="prop">--z-sticky</span>:  <span class="val">100</span>;
+  <span class="prop">--z-dropdown</span>:<span class="val">200</span>;
+  <span class="prop">--z-overlay</span>: <span class="val">500</span>;
+  <span class="prop">--z-modal</span>:   <span class="val">1000</span>;
+  <span class="prop">--z-toast</span>:   <span class="val">1100</span>;
+  <span class="prop">--z-tooltip</span>: <span class="val">1200</span>;
+}
+
+<span class="sel">.navbar</span>  { <span class="prop">z-index</span>: <span class="val">var(--z-sticky)</span>; }
+<span class="sel">.modal</span>   { <span class="prop">z-index</span>: <span class="val">var(--z-modal)</span>; }
+<span class="sel">.tooltip</span> { <span class="prop">z-index</span>: <span class="val">var(--z-tooltip)</span>; }</pre>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch16',document.querySelector('[data-page=ch16]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Pseudo-classes &amp; Elements</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('ch18',document.querySelector('[data-page=ch18]'))"><span class="chapter-nav-dir">Next →</span><span class="chapter-nav-title">Practical Guide</span></a>
+  </div>
+</div>
+
+<!-- CH18: PRACTICAL GUIDE -->
+<div class="page" id="page-ch18">
+  <div class="chapter">
+    <div class="chapter-header">
+      <div class="chapter-num">Chapter 18</div>
+      <h2>Practical Guide: CSS in the Real World</h2>
+      <p class="chapter-intro">Now that you understand CSS, here's how it fits into modern web development — when to write it yourself, when Tailwind makes more sense, what component libraries are for, and how to work effectively alongside AI tools.</p>
+    </div>
+
+    <h3>The modern frontend stack</h3>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Where CSS fits in the modern stack</div>
+      <svg width="100%" viewBox="0 0 660 260" role="img">
+        <defs><marker id="sarr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5"/></marker></defs>
+        <rect x="100" y="16" width="460" height="52" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+        <text x="330" y="44" font-family="sans-serif" font-size="14" font-weight="600" fill="#1e40af" text-anchor="middle">Component Libraries (shadcn, Ant Design, Radix UI)</text>
+        <text x="330" y="60" font-family="sans-serif" font-size="10" fill="#3b82f6" text-anchor="middle">Pre-built, accessible, copy-paste components — built on top of Tailwind or CSS</text>
+        <line x1="330" y1="70" x2="330" y2="85" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sarr)"/>
+        <rect x="100" y="88" width="460" height="52" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+        <text x="330" y="116" font-family="sans-serif" font-size="14" font-weight="600" fill="#5b21b6" text-anchor="middle">Tailwind CSS — utility-first classes</text>
+        <text x="330" y="132" font-family="'Fira Code',monospace" font-size="10" fill="#7c3aed" text-anchor="middle">class="text-lg font-bold text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700"</text>
+        <line x1="330" y1="142" x2="330" y2="157" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sarr)"/>
+        <rect x="100" y="160" width="460" height="52" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+        <text x="330" y="188" font-family="sans-serif" font-size="14" font-weight="600" fill="#065f46" text-anchor="middle">CSS — the foundation everything is built on</text>
+        <text x="330" y="204" font-family="sans-serif" font-size="10" fill="#10b981" text-anchor="middle">Box model, flexbox, grid, cascade, specificity — what you just learned</text>
+        <text x="330" y="242" font-family="sans-serif" font-size="11" fill="#6b7280" text-anchor="middle">Every Tailwind class is just CSS. Every component library is just CSS. Understanding CSS = understanding everything.</text>
+      </svg>
+    </div>
+
+    <h3>CSS vs Tailwind — which to use?</h3>
+    <table class="compare-table">
+      <thead><tr><th>Situation</th><th>Best choice</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Learning and understanding how things work</td><td><span class="tag blue">Plain CSS</span></td><td>See exactly what's happening, no abstraction</td></tr>
+        <tr><td>Building real projects at speed</td><td><span class="tag purple">Tailwind</span></td><td>Faster, consistent, no context switching</td></tr>
+        <tr><td>Custom design systems with unique branding</td><td><span class="tag blue">CSS Variables + CSS</span></td><td>Full control over every design token</td></tr>
+        <tr><td>Standard UI — dashboards, admin panels, forms</td><td><span class="tag amber">Component Library</span></td><td>Don't reinvent accessible, tested components</td></tr>
+        <tr><td>Creative landing pages with unique animations</td><td><span class="tag blue">Plain CSS</span></td><td>Tailwind utility constraints can fight creativity</td></tr>
+        <tr><td>Large team projects with consistent patterns</td><td><span class="tag purple">Tailwind</span></td><td>Enforces consistency without a design review</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Working with AI tools</h3>
+    <p>AI can write CSS code for you. But without understanding CSS, you can't:</p>
+    <ul>
+      <li><strong>Describe what you want accurately.</strong> "Make it look better" gets bad results. "Add a subtle box-shadow on hover with a translateY(-4px) transform transition" gets exactly what you want.</li>
+      <li><strong>Debug what went wrong.</strong> When the layout breaks, you need to know it's a stacking context issue or a missing <code>position: relative</code> on the parent — not just "it looks wrong."</li>
+      <li><strong>Review generated code.</strong> AI regularly generates overly complex CSS, uses inline styles unnecessarily, or misuses properties. You need to recognize bad code.</li>
+      <li><strong>Know when to push back.</strong> If AI solves a centering problem with absolute positioning instead of Flexbox, you should know to reject it and ask for the better solution.</li>
+    </ul>
+
+    <div class="callout tip">
+      <div class="callout-icon">🤖</div>
+      <div class="callout-body"><strong>How to use AI for CSS effectively</strong><p>Use AI for: generating repetitive utility classes, exploring unfamiliar properties, writing the first draft of component styles. Always read and understand the output. The goal is to guide AI with precision — not accept whatever it produces blindly.</p></div>
+    </div>
+
+    <h3>Every-project checklist</h3>
+    <div class="callout purple">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <strong>Before writing any component CSS</strong>
+        <p>
+          ✓ <code>*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }</code><br>
+          ✓ Viewport meta tag in HTML head<br>
+          ✓ CSS variables for colors, fonts, spacing in <code>:root</code><br>
+          ✓ External stylesheet linked — no inline styles, no internal styles<br>
+          ✓ Mobile-first: base styles for mobile, <code>min-width</code> queries for larger screens<br>
+          ✓ <code>rem</code> for font sizes and spacing (never <code>px</code> for type)<br>
+          ✓ Classes only in CSS — no IDs as selectors<br>
+          ✓ Flexbox or Grid for layout — no floats<br>
+          ✓ <code>@media (prefers-reduced-motion: reduce)</code> wrapping all animations<br>
+          ✓ Consistent z-index scale using CSS variables
+        </p>
+      </div>
+    </div>
+
+    <h3>Patterns you'll write on every project</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">CSS — The essential toolkit</span></div>
+<pre><span class="cmt">/* Center anything */</span>
+<span class="sel">.center</span> { <span class="prop">display</span>: <span class="val">flex</span>; <span class="prop">justify-content</span>: <span class="val">center</span>; <span class="prop">align-items</span>: <span class="val">center</span>; }
+
+<span class="cmt">/* Responsive centered container */</span>
+<span class="sel">.container</span> { <span class="prop">width</span>: <span class="val">min(1200px, 100% - 48px)</span>; <span class="prop">margin</span>: <span class="val">0 auto</span>; }
+
+<span class="cmt">/* Full viewport hero */</span>
+<span class="sel">.hero</span> { <span class="prop">min-height</span>: <span class="val">100vh</span>; <span class="prop">display</span>: <span class="val">flex</span>; <span class="prop">align-items</span>: <span class="val">center</span>; }
+
+<span class="cmt">/* Responsive grid — no media queries needed */</span>
+<span class="sel">.grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fill, minmax(280px, 1fr))</span>;
+  <span class="prop">gap</span>: <span class="val">1.5rem</span>;
+}
+
+<span class="cmt">/* Truncate text with ellipsis */</span>
+<span class="sel">.truncate</span> { <span class="prop">overflow</span>: <span class="val">hidden</span>; <span class="prop">text-overflow</span>: <span class="val">ellipsis</span>; <span class="prop">white-space</span>: <span class="val">nowrap</span>; }
+
+<span class="cmt">/* Image overlay (image + dark gradient) */</span>
+<span class="sel">.overlay</span> {
+  <span class="prop">background</span>: <span class="val">linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+               url('img.jpg') center/cover no-repeat</span>;
+}
+
+<span class="cmt">/* Smooth card hover lift */</span>
+<span class="sel">.card</span>       { <span class="prop">transition</span>: <span class="val">transform 0.2s ease, box-shadow 0.2s ease</span>; }
+<span class="sel">.card:hover</span> { <span class="prop">transform</span>: <span class="val">translateY(-4px)</span>; <span class="prop">box-shadow</span>: <span class="val">0 12px 40px rgba(0,0,0,0.15)</span>; }
+
+<span class="cmt">/* Badge on a card */</span>
+<span class="sel">.card</span>  { <span class="prop">position</span>: <span class="val">relative</span>; }
+<span class="sel">.badge</span> { <span class="prop">position</span>: <span class="val">absolute</span>; <span class="prop">top</span>: <span class="val">12px</span>; <span class="prop">right</span>: <span class="val">12px</span>; }
+
+<span class="cmt">/* Sticky header */</span>
+<span class="sel">.header</span> { <span class="prop">position</span>: <span class="val">sticky</span>; <span class="prop">top</span>: <span class="val">0</span>; <span class="prop">z-index</span>: <span class="val">100</span>; <span class="prop">background</span>: <span class="val">white</span>; }
+
+<span class="cmt">/* Fixed action button (bottom-right corner) */</span>
+<span class="sel">.fab</span> { <span class="prop">position</span>: <span class="val">fixed</span>; <span class="prop">bottom</span>: <span class="val">24px</span>; <span class="prop">right</span>: <span class="val">24px</span>; <span class="prop">z-index</span>: <span class="val">200</span>; }
+
+<span class="cmt">/* Focus ring for accessibility */</span>
+<span class="sel">:focus-visible</span> { <span class="prop">outline</span>: <span class="val">2px solid var(--color-primary)</span>; <span class="prop">outline-offset</span>: <span class="val">2px</span>; }
+<span class="sel">:focus:not(:focus-visible)</span> { <span class="prop">outline</span>: <span class="val">none</span>; } <span class="cmt">/* hide for mouse users */</span></pre>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">🎯</div>
+      <div class="callout-body"><strong>You now understand all of CSS</strong><p>This guide covered every major concept from the cascade to Grid. The next step is practice — build real things, break them, fix them. CSS knowledge compounds with use. The more you build, the less you think about syntax and the more you focus on what actually matters: making things that look and feel great.</p></div>
+    </div>
+  </div>
+  <div class="chapter-nav">
+    <a class="chapter-nav-btn" onclick="showPage('ch17',document.querySelector('[data-page=ch17]'))"><span class="chapter-nav-dir">← Previous</span><span class="chapter-nav-title">Z-index &amp; Stacking</span></a>
+    <a class="chapter-nav-btn" onclick="showPage('home',document.querySelector('[data-page=home]'))"><span class="chapter-nav-dir">↑ Back to</span><span class="chapter-nav-title">Overview</span></a>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function filterNav(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('#sidebar-nav .nav-item').forEach(item => {
+    item.classList.toggle('hidden', q.length > 0 && !item.textContent.toLowerCase().includes(q));
+  });
+  document.querySelectorAll('#sidebar-nav .nav-section-title').forEach(s => {
+    s.style.display = q.length > 0 ? 'none' : '';
+  });
+}
+</script>
+</body>
+</html>
